@@ -1,43 +1,156 @@
-import tkinter
+import tkinter as tk
 from tkinter import ttk
+  
+ 
+LARGEFONT =("Verdana", 35)
+  
+class tkinterApp(tk.Tk):
+     
+    # __init__ function for class tkinterApp
+    def __init__(self, *args, **kwargs):
+         
+        # __init__ function for class Tk
+        tk.Tk.__init__(self, *args, **kwargs)
+        
 
-class simpleapp_tk(tkinter.Tk):
-    def __init__(self,parent):
-        tkinter.Tk.__init__(self,parent)
-        self.parent = parent
-        self.initialize()
+        
+        # creating a container
+        container = tk.Frame(self) 
+        container.pack(side = "top", fill = "both", expand = True)
+  
+        container.grid_rowconfigure(0, weight = 1)
+        container.grid_columnconfigure(0, weight = 1)
 
-    def initialize(self):
-        self.grid()
+        # initializing frames to an empty array
+        self.frames = {} 
+  
+        # iterating through a tuple consisting
+        # of the different page layouts
+        for F in (StartPage, Page1, Page2):
+  
+            frame = F(container, self)
+  
+            # initializing frame of that object from
+            # startpage, page1, page2 respectively with
+            # for loop
+            self.frames[F] = frame
+  
+            frame.grid(row = 0, column = 0, sticky ="nsew")
+  
+        self.show_frame(StartPage)
+  
+    # to display the current frame passed as
+    # parameter
+    def show_frame(self, cont):
+        frame = self.frames[cont]
+        frame.tkraise()
+  
+# first window frame startpage
+  
+class StartPage(tk.Frame):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+        
 
-        label = tkinter.Label(self,anchor="center",bg="green")
-        label.grid(column=0,row=0,sticky='NSEW')
 
-        label2 = tkinter.Label(self,anchor="center",bg="black")
-        label2.grid(column=1,row=0,sticky='NSEW')
+        # label of frame Layout 2
+        label = ttk.Label(self, text ="Startpage", font = LARGEFONT)
+         
+        # putting the grid in its place by using
+        # grid
+        label.grid(row = 0, column = 4, padx = 10, pady = 10)
+  
+        button1 = ttk.Button(self, text ="Page 1",
+        command = lambda : controller.show_frame(Page1))
+     
+        # putting the button in its place by
+        # using grid
+        button1.grid(row = 1, column = 1, padx = 10, pady = 10)
+  
+        ## button to show frame 2 with text layout2
+        button2 = ttk.Button(self, text ="Page 2",
+        command = lambda : controller.show_frame(Page2))
+     
+        # putting the button in its place by
+        # using grid
+        button2.grid(row = 2, column = 1, padx = 10, pady = 10)
+  
+          
+  
+  
+# second window frame page1
+class Page1(tk.Frame):
+     
+    def __init__(self, parent, controller):
+         
+        tk.Frame.__init__(self, parent)
+        label = ttk.Label(self, text ="Page 1", font = LARGEFONT)
+        label.grid(row = 0, column = 4, padx = 10, pady = 10)
+  
+        # button to show frame 2 with text
+        # layout2
+        button1 = ttk.Button(self, text ="StartPage",
+                            command = lambda : controller.show_frame(StartPage))
+     
+        # putting the button in its place
+        # by using grid
+        button1.grid(row = 1, column = 1, padx = 10, pady = 10)
+  
+        # button to show frame 2 with text
+        # layout2
+        button2 = ttk.Button(self, text ="Page 2",
+                            command = lambda : controller.show_frame(Page2))
+     
+        # putting the button in its place by
+        # using grid
+        button2.grid(row = 2, column = 1, padx = 10, pady = 10)
+  
+  
+  
+  
+# third window frame page2
+class Page2(tk.Frame):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+        label = ttk.Label(self, text ="Page 2", font = LARGEFONT)
+        label.grid(row = 0, column = 4, padx = 10, pady = 10)
+  
+        # button to show frame 2 with text
+        # layout2
+        button1 = ttk.Button(self, text ="Page 1",
+                            command = lambda : controller.show_frame(Page1))
+     
+        # putting the button in its place by
+        # using grid
+        button1.grid(row = 1, column = 1, padx = 10, pady = 10)
+  
+        # button to show frame 3 with text
+        # layout3
+        button2 = ttk.Button(self, text ="Startpage",
+                            command = lambda : controller.show_frame(StartPage))
+     
+        # putting the button in its place by
+        # using grid
+        button2.grid(row = 2, column = 1, padx = 10, pady = 10)
+  
+  
+# Driver Code
+# app = tkinterApp()
+# app.mainloop()
 
-        label3 = tkinter.Label(self,anchor="center",bg="red")
-        label3.grid(column=2,row=0,sticky='NSEW')
+def main():
+    root = tkinterApp()
+    root.title('xl2web')
+    width = root.winfo_screenwidth()
+    height = root.winfo_screenheight()
+    root.geometry('%dx%d+0+0'% (width, height))
+    root.state('zoomed')
+   
+    root.bind('<Key-Escape>', lambda event: quit())
+    root.update()
 
-        label4 = tkinter.Label(self,anchor="center",bg="purple")
-        label4.grid(column=0,row=1,sticky='NSEW')
-
-        label5 = tkinter.Label(self,anchor="center",bg="blue")
-        label5.grid(column=1,row=1,sticky='NSEW')
-
-        label6 = tkinter.Label(self,anchor="center",bg="yellow")
-        label6.grid(column=2,row=1,sticky='NSEW')
-
-        nameText = ttk.Entry(self, textvariable = "name_text", width = 100, justify = "center").grid(row = 0, column = 0, columnspan = 30)
-
-        self.grid_columnconfigure(0,weight=1)
-        self.grid_columnconfigure(1,weight=1)
-        self.grid_columnconfigure(2,weight=1)
-        self.grid_rowconfigure(0,weight=1)
-        self.grid_rowconfigure(1,weight=1)
+    return root
 
 
-if __name__ == "__main__":
-    app = simpleapp_tk(None)
-    app.title("Test App")
-    app.mainloop()
+if __name__ == '__main__':
+    main().mainloop()

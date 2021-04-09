@@ -1,3 +1,4 @@
 {
-    "python.pythonPath": "projectEnv\\Scripts\\python.exe"
+    "python.pythonPath": "C:\\Python\\python.exe",
+    "python.analysis.extraPaths": ["./"],
 }
