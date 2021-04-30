@@ -59,13 +59,31 @@ class Main(tk.Frame):
 
         mHelp.add_command(label="About")
         controller.config(menu=menubar)
+
+        # Hospitall name
+        ttk.Label(self,font= ('Arial', 25), text="Knee OA Detection System").place(relx = 0.3, rely =0.01)
+
+        # ******* Buttons ADD and Send ***********
+        ttk.Button(self, text= "Add & Send", command= self).place(
+            relx=0.4,rely=0.27)
+        ttk.Button(self, text= "Clear", command= self.clear).place(relx=0.5,rely=0.27)
+
+
         ttk.Button(self, text= "Send", command= lambda : controller.show_frame(Predict)).place(relx=0.7,rely=0.9)
         ttk.Button(self, text= "Clear", command= self).place(relx=0.8,rely=0.9)
 
     def makeWidgets(self):
 
+        self.id_text = StringVar()
         self.name_text = StringVar()
         self.address_text = StringVar()
+        self.city_text = StringVar()
+        self.gender_value = StringVar()
+        self.age_value = StringVar()
+        self.contact_text = StringVar()
+        self.blood_value = StringVar()
+        
+        
         style = entryStyle = labelStyle = buttonStyle = ttk.Style()
         style.configure('.', font=('Helvetica', 12))
         entryStyle.configure('TEntry',foreground = 'green')
@@ -73,14 +91,72 @@ class Main(tk.Frame):
         buttonStyle.configure('TButton',background='#232323', foreground = 'black', borderwidth=1, focusthickness=3, focuscolor='green')
         buttonStyle.map('TButton', background=[('active','green')])
 
+        # Patient Id
+        ttk.Label(self, text="Patient Id:").place(relx = 0.05, rely =0.1)
+        ttk.Entry(self, font = ('Arial', 12), textvariable = self.id_text, style="TEntry").place(
+            relx = 0.11, rely =0.1, width=200, height=25)
+
         # Name
-        ttk.Label(self, text="Name:").place(relx = 0.1, rely =0.1)
-        ttk.Entry(self, font = ('Arial', 12), textvariable = self.name_text, style="TEntry").place(relx = 0.15, rely =0.1, width=200, height=25)
+        ttk.Label(self, text="Full Name:").place(relx = 0.3, rely =0.1)
+        ttk.Entry(self, font = ('Arial', 12), textvariable = self.name_text, style="TEntry").place(
+            relx = 0.37, rely =0.1, width=250, height=25)
+
+        # Gender
+        ttk.Label(self, text="Gender:").place(relx = 0.6, rely =0.1)
+       
+        # Gender Combobox
+        self.gender = ttk.Combobox(self, textvariable=self.gender_value, 
+                                state='readonly')
+        self.gender['values'] = ('None', 'Male', 'Female')
+        self.gender.current()
+        self.gender.place(
+             relx = 0.65, rely =0.1, width=100, height=25)
+
+        # Age
+        ttk.Label(self, text="Age:").place(relx = 0.77, rely =0.1)
+        ttk.Entry(self, font = ('Arial', 12), textvariable = self.age_value).place(
+            relx = 0.8, rely =0.1, width=100, height=25)
+        
+        #********************************************************************
+
+        # Blood Group
+        ttk.Label(self, text="Blood Group:").place(relx = 0.05, rely =0.18)
+        self.blood_group = ttk.Combobox(self, textvariable=self.blood_value, 
+                                state='readonly')
+        self.blood_group['values'] = ('A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-')
+        self.blood_group.current()
+        self.blood_group.place(
+            relx = 0.13, rely =0.18, width=150, height=25)
+
+        # Contact Number
+        ttk.Label(self, text="Contact No.:").place(relx = 0.3, rely =0.18)
+        ttk.Entry(self, font = ('Arial', 12), textvariable = self.contact_text, style="TEntry").place(
+            relx = 0.37, rely =0.18, width=200, height=25)
 
         # Address
-        ttk.Label(self, text="Address:").place(relx = 0.3, rely =0.1)
-        ttk.Entry(self, font = ('Arial', 12), textvariable = self.address_text).place(relx = 0.35, rely =0.1, width=200, height=25)
+        ttk.Label(self, text="Address:").place(relx = 0.55, rely =0.18)
+        ttk.Entry(self, font = ('Arial', 12), textvariable = self.address_text).place(
+            relx = 0.6, rely =0.18, width=200, height=25)
         
+        # City
+        ttk.Label(self, text="City:").place(relx = 0.77, rely =0.18)
+        ttk.Entry(self, font = ('Arial', 12), textvariable = self.city_text).place(
+            relx = 0.8, rely =0.18, width=100, height=25)
+
+
+    def clear(self):
+        self.id_text.set("")
+        self.name_text.set("")
+        self.address_text.set("")
+        self.city_text.set("")
+        self.gender_value.set("")
+        self.age_value.set("")
+        self.contact_text.set("")
+        self.blood_value.set("")
+
+
+
+
 
 
 class Predict(tk.Frame):
@@ -88,44 +164,44 @@ class Predict(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         # Load Model
-        self.x = load_learner('F:\\8thproject\\', 'final.pkl') 
+    #     self.x = load_learner('F:\\8thproject\\', 'final.pkl') 
 
-        label = tk.Label(self, text="Preditions", font=LARGE_FONT)
-        label.pack(pady=10, padx=10)
+    #     label = tk.Label(self, text="Preditions", font=LARGE_FONT)
+    #     label.pack(pady=10, padx=10)
 
-        self.fileName = ""
-        # File Explorer Button
-        ttk.Button(self, text= "Open File", command= self.fileOpen).place(x=100, y=0)
+    #     self.fileName = ""
+    #     # File Explorer Button
+    #     ttk.Button(self, text= "Open File", command= self.fileOpen).place(x=100, y=0)
 
-        # Predict Button
-        ttk.Button(self, text= "Predict", 
-        command= self.showResult).place(x=100,y=100)
+    #     # Predict Button
+    #     ttk.Button(self, text= "Predict", 
+    #     command= self.showResult).place(x=100,y=100)
 
-        # Move to Previous Frame
-        ttk.Button(self, text= "Page 1", command= lambda : controller.show_frame(Main)).place(x=200, y=100)
+    #     # Move to Previous Frame
+    #     ttk.Button(self, text= "Page 1", command= lambda : controller.show_frame(Main)).place(x=200, y=100)
 
-    def fileOpen(self):
-        FILE_name = tk.filedialog.askopenfilename(
-            initialdir = ".",
-            title      = "Open",
-            filetypes  = (
-                ("Photo files", "*.png"),
-                ("All", "*.*")
-            )
-        )
-        if FILE_name:
-            self.fileName = FILE_name
+    # def fileOpen(self):
+    #     FILE_name = tk.filedialog.askopenfilename(
+    #         initialdir = ".",
+    #         title      = "Open",
+    #         filetypes  = (
+    #             ("Photo files", "*.png"),
+    #             ("All", "*.*")
+    #         )
+    #     )
+    #     if FILE_name:
+    #         self.fileName = FILE_name
     
-    def showResult(self):
-        if self.fileName == "":
-            messagebox.showinfo(title = "Alert",message = "Please Open Any File First")
-        else:
-            img = open_image(self.fileName)
-            predict = self.x.predict(img)
-            max_value = max(predict[2],key=lambda x:float(x)) 
-            print("KL Grade : "+ str(predict[0]) + " with value " + str(max_value.item()*100))
-            result = "KL Grade : "+ str(predict[0]) + " with value " + str(max_value.item()*100)
-            ttk.Label(self, text= result).place(relx = 0.3, rely =0.1)
+    # def showResult(self):
+    #     if self.fileName == "":
+    #         messagebox.showinfo(title = "Alert",message = "Please Open Any File First")
+    #     else:
+    #         img = open_image(self.fileName)
+    #         predict = self.x.predict(img)
+    #         max_value = max(predict[2],key=lambda x:float(x)) 
+    #         print("KL Grade : "+ str(predict[0]) + " with value " + str(max_value.item()*100))
+    #         result = "KL Grade : "+ str(predict[0]) + " with value " + str(max_value.item()*100)
+    #         ttk.Label(self, text= result).place(relx = 0.3, rely =0.1)
 
     
 
