@@ -1,6 +1,6 @@
 """ Messing about with tkinter """
 import tkinter as tk
-from tkinter import StringVar, ttk
+from tkinter import Frame, StringVar, ttk
 from tkinter import messagebox
 from fastai.basic_train import load_learner
 from fastai.vision.image import open_image
@@ -10,6 +10,8 @@ from fastai.vision import *
 # from fastai.vision.all import *
 
 import tkinter.filedialog
+from openpyxl import Workbook
+from datetime import datetime
 
 LARGE_FONT = ("Verdana", 12)
 
@@ -44,6 +46,7 @@ class Main(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         self.makeWidgets()
+        self.tree()
         menubar = tk.Menu(controller)
         mFile = tk.Menu(menubar, tearoff=False)
         menubar.add_cascade(label="File", menu=mFile)
@@ -64,16 +67,14 @@ class Main(tk.Frame):
         ttk.Label(self,font= ('Arial', 25), text="Knee OA Detection System").place(relx = 0.3, rely =0.01)
 
         # ******* Buttons ADD and Send ***********
-        ttk.Button(self, text= "Add & Send", command= self).place(
+        ttk.Button(self, text= "Save & Send", command= self.add_data).place(
             relx=0.4,rely=0.27)
         ttk.Button(self, text= "Clear", command= self.clear).place(relx=0.5,rely=0.27)
-
-
-        ttk.Button(self, text= "Send", command= lambda : controller.show_frame(Predict)).place(relx=0.7,rely=0.9)
-        ttk.Button(self, text= "Clear", command= self).place(relx=0.8,rely=0.9)
+        #***********
+        ttk.Button(self, text= "Send", command= lambda : controller.show_frame(Predict)).place(relx=0.8,rely=0.9)
+        
 
     def makeWidgets(self):
-
         self.id_text = StringVar()
         self.name_text = StringVar()
         self.address_text = StringVar()
@@ -143,7 +144,7 @@ class Main(tk.Frame):
         ttk.Entry(self, font = ('Arial', 12), textvariable = self.city_text).place(
             relx = 0.8, rely =0.18, width=100, height=25)
 
-
+        # ***********************************
     def clear(self):
         self.id_text.set("")
         self.name_text.set("")
@@ -155,9 +156,79 @@ class Main(tk.Frame):
         self.blood_value.set("")
 
 
+    def add_data(self):
+        now = datetime.now()
+        dt_string = now.strftime("%d-%m-%Y-%H-%M-%S")
+        tree_rows = len(self.tree.get_children())
+        self.data = [tree_rows+1, self.id_text.get(), self.name_text.get(), self.gender_value.get(), self.age_value.get(),
+        self.blood_value.get(), self.contact_text.get(), self.address_text.get(), self.city_text.get(), dt_string, ""]
+        self.tree.insert('', tk.END, values=self.data)
+        self.saveView()
 
+    def saveView(self):
+        import os.path
+        from os import path
+        from openpyxl import load_workbook
+        if path.exists("data.xlsx"):
+            wb = load_workbook('data.xlsx')
+            work_sheet = wb.active # Get active sheet
+            work_sheet.append(self.data)
+            wb.save('data.xlsx')
 
+        else:
+            book = Workbook()
+            sheet = book.active
+            headIndex = 1
+            for head in self.tree['column']:
+                sheet.cell(row=1, column=headIndex).value = head
+                headIndex += 1
 
+            rowIndex = 2
+            for row in self.tree.get_children():
+                colIndex = 1
+                for value in self.tree.item(row)['values']:
+                    sheet.cell(row = rowIndex, column = colIndex).value = value
+                    colIndex += 1
+                rowIndex += 1
+
+            
+            book.save('data'+".xlsx")
+            book.close()
+        messagebox.showinfo(title = "Save",message = "File Save Successful")
+        
+
+    def tree(self):
+        frame1 = Frame(self)
+        frame1.pack()
+        frame1.place(relheight=0.5, relwidth=0.9, relx = 0.05, rely =0.4)
+
+        tk.Grid.rowconfigure(frame1, 0, weight=1)
+        tk.Grid.columnconfigure(frame1, 0, weight=1)
+
+        self.tree = ttk.Treeview(frame1,selectmode="extended", show="headings", height=2)
+        self.tree.grid(column=0, row=0, sticky='news')
+        ## Adds scrollbars
+        wY = ttk.Scrollbar(frame1, orient="vertical", command=self.tree.yview)
+        wY.grid(column=1, row=0, sticky='ns')
+        wY.config(takefocus=0)
+
+        wX = ttk.Scrollbar(frame1, orient="horizontal", command=self.tree.xview)
+        wX.grid(column=0, row=1, sticky='we')
+        wX.config(takefocus=0)
+
+        self.tree.configure(xscrollcommand=wX.set, yscrollcommand=wY.set)
+        
+        #column_index = ["1","2","3", "4", "5", "6", "7", "8", "9", "10"]
+        column = ['Patient ID', 'Name', 'Gender', 'Age', 'Blood Group', 'Contact', 'Address', 'City', 'Date Created', 'Result']
+        self.tree["columns"] = ['#'] + column
+
+        self.tree.heading('#', text='#')
+        self.tree.column('#', minwidth=20, width=30, stretch=False)
+
+        for i in column:
+            self.tree.column(i, width=100, minwidth=50)
+            self.tree.heading(i, text = i)
+            
 
 class Predict(tk.Frame):
 
