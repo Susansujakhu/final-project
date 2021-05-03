@@ -1,5 +1,4 @@
 """ Messing about with tkinter """
-import os
 import tkinter as tk
 from tkinter import Frame, StringVar, ttk
 from tkinter import messagebox
@@ -262,19 +261,30 @@ class Interface(tk.Frame):
         book.close()
 
     def add_data(self):
-        
+        duplicate_id  = False
         if self.id_text.get() and self.name_text.get() and self.gender_value.get() and self.age_value.get():
-            now = datetime.now()
-            dt_string = now.strftime("%d-%m-%Y-%H-%M-%S")
-            self.tree_rows = len(self.tree.get_children())
+            wb = load_workbook('data.xlsx')
+            ws = wb.active 
+            for i in range(2, ws.max_row + 1):
+                for j in range(1,2):
+                    if str(self.id_text.get()) == str(ws.cell(i,j).value):
+                        duplicate_id = True
+            wb.close()
+            if duplicate_id == False:
+                now = datetime.now()
+                dt_string = now.strftime("%d-%m-%Y-%H-%M-%S")
+                self.tree_rows = len(self.tree.get_children())
 
-            self.data = [self.id_text.get(), self.name_text.get(), self.gender_value.get(), self.age_value.get(),
-            self.blood_value.get(), self.contact_text.get(), self.address_text.get(), self.city_text.get(),
-            self.description.get("1.0", 'end-1c') , "", dt_string]
+                self.data = [self.id_text.get(), self.name_text.get(), self.gender_value.get(), self.age_value.get(),
+                self.blood_value.get(), self.contact_text.get(), self.address_text.get(), self.city_text.get(),
+                self.description.get("1.0", 'end-1c') , "", dt_string]
 
-            self.tree.insert('', tk.END, values=self.data)
-            self.clear()
-            self.saveView()
+                self.tree.insert('', tk.END, values=self.data)
+                self.clear()
+                self.saveView()
+            
+            else:
+                messagebox.showinfo(title = "Error",message = "Patient ID already exists")
         else:
             self.clear()
             messagebox.showinfo(title = "Error",message = "Please Fill all required fields")
@@ -449,9 +459,10 @@ class Predict(tk.Frame):
         else:
             img = open_image(self.fileName)
             predict = self.x.predict(img)
-            max_value = max(predict[2],key=lambda x:float(x)) 
+
+            max_value = max(predict[2],key=lambda x:float(x))
             #print("KL Grade : "+ str(predict[0]) + " with value " + str(max_value.item()*100))
-            self.result = "KL Grade : "+ str(predict[0]) + " with value " + str(max_value.item()*100)
+            self.result = "KL Grade : "+ str(predict[0]) + " with value " + str(round(max_value.item()*100, 2))
             grade = str(predict[0])
             accuracy_percent = str(max_value.item()*100)
             ttk.Label(self, text= grade).place(relx = 0.38, rely =0.75)
