@@ -3,9 +3,10 @@ import tkinter as tk
 from tkinter import Frame, StringVar, ttk
 from tkinter import messagebox
 from tkinter.constants import DISABLED, RIDGE
-from fastai.basic_train import load_learner
-from fastai.metrics import accuracy
-from fastai.vision.image import open_image
+# from fastai.basic_train import load_learner
+# from fastai.metrics import accuracy
+
+# from fastai.vision import open_image
 import numpy as np
 from fastai import *
 from fastai.vision import *
@@ -355,13 +356,13 @@ class Interface(tk.Frame):
         messagebox.showinfo(title = "Success",message = "Data Delete Successful")
 
             
-    def goto_predict(self, cont):
+    def goto_predict(self, controller):
         try:
             for item in self.tree.selection():
                 self.row_item = self.tree.item(item)
             self.selected_row = self.row_item['values']
-      
-            cont.show_frame(Predict)
+            # print(self.selected_row)
+            controller.show_frame(Predict)
         except:
             messagebox.showinfo(title = "Error",message = "Select any data first")
 
@@ -378,7 +379,12 @@ class Predict(tk.Frame):
         style.configure('W.TLabel', font=('Helvetica', 20))
 
         ttk.Label(self, text="Predictions", style = 'W.TLabel').place(relx = 0.5, rely =0.02)
+        # File Explorer Button
+        ttk.Button(self, text= "Open Image", command= self.fileOpen).place(relx = 0.26, rely = 0.12)
 
+        # Predict Button
+        ttk.Button(self, text= "Predict", 
+        command= self.showResult).place(relx = 0.26, rely = 0.6)
 
     def tkraise(self):
         
@@ -425,15 +431,8 @@ class Predict(tk.Frame):
             if m == 8:
                 break
 
-        # Load Model
-        self.x = load_learner('F:\\8thproject\\', 'final.pkl') 
-        self.fileName = ""
-        # File Explorer Button
-        ttk.Button(self, text= "Open Image", command= self.fileOpen).place(relx = 0.26, rely = 0.12)
-
-        # Predict Button
-        ttk.Button(self, text= "Predict", 
-        command= self.showResult).place(relx = 0.26, rely = 0.6)
+        
+        
 
     def fileOpen(self):
         FILE_name = tk.filedialog.askopenfilename(
@@ -458,6 +457,11 @@ class Predict(tk.Frame):
             messagebox.showinfo(title = "Alert",message = "Please Open Any File First")
         else:
             img = open_image(self.fileName)
+            # Load Model
+            self.x = load_learner('F:\\8thproject\\', 'final.pkl') 
+            # self.x = load_learner('F:\\8thproject\\final.pkl') 
+            self.fileName = ""
+            
             predict = self.x.predict(img)
 
             max_value = max(predict[2],key=lambda x:float(x))
@@ -469,7 +473,7 @@ class Predict(tk.Frame):
             ttk.Label(self, text= accuracy_percent).place(relx = 0.38, rely =0.8)
 
             ttk.Button(self, text= "Save Result", command= self.save_result).place(relx = 0.38, rely = 0.85)
-            ttk.Button(self, text= "Download Result", command= self.download).place(relx = 0.45, rely =0.85)
+            ttk.Button(self, text= "Download Result", command= self.download).place(relx = 0.5, rely =0.85)
 
     def save_result(self):
         wb = load_workbook('data.xlsx')
