@@ -3,15 +3,15 @@ import tkinter as tk
 from tkinter import Frame, StringVar, ttk
 from tkinter import messagebox
 from tkinter.constants import DISABLED, RIDGE
-# from fastai.basic_train import load_learner
-# from fastai.metrics import accuracy
+from fastai.basic_train import load_learner
+from fastai.vision.image import open_image
 
-# from fastai.vision import open_image
 import numpy as np
 from fastai import *
 from fastai.vision import *
 
 import tkinter.filedialog
+import openpyxl
 from openpyxl import Workbook
 from datetime import datetime
 from os import name, path
@@ -117,7 +117,7 @@ class Interface(tk.Frame):
         search = search.lower()
         for eachItem in ItemsOnTreeview:
             if search in self.tree.item(eachItem)['values'][j-1].lower():
-                print(search)
+                # print(search)
                 #print(self.tree.item(eachItem)['values'][2])
                 search_var = self.tree.item(eachItem)['values']
                 self.tree.delete(eachItem)
@@ -242,7 +242,7 @@ class Interface(tk.Frame):
         
         #column_index = ["1","2","3", "4", "5", "6", "7", "8", "9", "10"]
         
-        self.column = ['Patient ID', 'Name', 'Gender', 'Age', 'Blood Group', 'Contact', 'Address', 'City', 'Description', 'Result', 'Date Created']
+        self.column = ['Patient ID', 'Name', 'Gender', 'Age', 'Blood Group', 'Contact', 'Address', 'City', 'Description', 'Image', 'Result', 'Date Created']
         self.tree["columns"] = self.column
 
         for i in self.column:
@@ -251,6 +251,24 @@ class Interface(tk.Frame):
         
         if path.exists("data.xlsx"):
             self.load_data()
+        else:
+            book = openpyxl.Workbook()
+            sheet = book.active
+            headIndex = 1
+            for head in self.tree['column']:
+                sheet.cell(row=1, column=headIndex).value = head
+                headIndex += 1
+
+            rowIndex = 2
+            for row in self.tree.get_children():
+                colIndex = 1
+                for value in self.tree.item(row)['values']:
+                    sheet.cell(row = rowIndex, column = colIndex).value = value
+                    colIndex += 1
+                rowIndex += 1
+            book.save('data'+".xlsx")
+            book.close()
+
 
     def load_data(self):
         book = load_workbook("data.xlsx")
@@ -278,7 +296,7 @@ class Interface(tk.Frame):
 
                 self.data = [self.id_text.get(), self.name_text.get(), self.gender_value.get(), self.age_value.get(),
                 self.blood_value.get(), self.contact_text.get(), self.address_text.get(), self.city_text.get(),
-                self.description.get("1.0", 'end-1c') , "", dt_string]
+                self.description.get("1.0", 'end-1c') , "", "", dt_string]
 
                 self.tree.insert('', tk.END, values=self.data)
                 self.clear()
@@ -299,23 +317,6 @@ class Interface(tk.Frame):
             work_sheet.append(self.data)
             wb.save('data.xlsx')
 
-        else:
-            book = Workbook()
-            sheet = book.active
-            headIndex = 1
-            for head in self.tree['column']:
-                sheet.cell(row=1, column=headIndex).value = head
-                headIndex += 1
-
-            rowIndex = 2
-            for row in self.tree.get_children():
-                colIndex = 1
-                for value in self.tree.item(row)['values']:
-                    sheet.cell(row = rowIndex, column = colIndex).value = value
-                    colIndex += 1
-                rowIndex += 1
-            book.save('data'+".xlsx")
-            book.close()
         child_id = self.tree.get_children()[-1]
         self.tree.focus(child_id)
         self.tree.selection_set(child_id)
@@ -332,7 +333,7 @@ class Interface(tk.Frame):
             self.row_item = self.tree.item(item)
         self.selected_row = self.row_item['values']
         to_delete = self.selected_row[0]
-        print(to_delete)
+        # print(to_delete)
 
         self.tree.delete(self.selected_item)
 
@@ -460,7 +461,7 @@ class Predict(tk.Frame):
             # Load Model
             self.x = load_learner('F:\\8thproject\\', 'final.pkl') 
             # self.x = load_learner('F:\\8thproject\\final.pkl') 
-            self.fileName = ""
+            # self.fileName = ""
             
             predict = self.x.predict(img)
 
@@ -491,7 +492,7 @@ class Predict(tk.Frame):
                 # Find Cell Place in Data
         for i in range(2, ws.max_row + 1):
             for j in range(1,2):
-                print(ws.cell(i,j).value)
+                # print(ws.cell(i,j).value)
                 if str(row_id) == str(ws.cell(i,j).value):
                     print(ws.cell(i,j).value)
                     cell_place = (ws.cell(i,j))  
@@ -499,9 +500,11 @@ class Predict(tk.Frame):
 
         cell_id = cell_place.coordinate
 
-        cell_id = cell_id.replace('A','J')
-
-        ws[cell_id] = self.result
+        cell_id_result = cell_id.replace('A','K')
+        cell_id_image = cell_id.replace('A','J')
+        
+        ws[cell_id_result] = self.result
+        ws[cell_id_image] = self.fileName
 
         wb.save('data.xlsx')
         #****** Update Treeview*********
