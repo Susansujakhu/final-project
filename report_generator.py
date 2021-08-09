@@ -54,7 +54,7 @@ def makePDF(self):
 	pdf.text(x= 150, y= 100, txt= "Result")
 
 	pdf.set_font("Arial" , size = 14)
-	pdf.text(x= 120, y= 110, txt= str(self.row_data[9]))
+	pdf.text(x= 120, y= 110, txt= str(self.row_data[10]))
 	pdf.text(x= 35, y= 215, txt= "Additional Treatments")
 
 

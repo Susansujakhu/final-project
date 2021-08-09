@@ -3,8 +3,8 @@ import tkinter as tk
 from tkinter import Frame, StringVar, ttk
 from tkinter import messagebox
 from tkinter.constants import DISABLED, RIDGE
-from fastai.basic_train import load_learner
-from fastai.vision.image import open_image
+# from fastai.basic_train import load_learner
+# from fastai.vision.image import open_image
 
 import numpy as np
 from fastai import *
@@ -73,7 +73,7 @@ class Interface(tk.Frame):
         controller.config(menu=menubar)
         self.controller = controller
         # Hospitall name
-        ttk.Label(self,font= ('Arial', 25), text="Knee OA Detection System").place(relx = 0.3, rely =0.01)
+        ttk.Label(self,font= ('Arial', 25), text="Knee OA Classification").place(relx = 0.3, rely =0.01)
 
         # ******* Buttons ADD and Send ***********
         ttk.Button(self, text= "Save & Send", command= self.add_data).place(
@@ -149,12 +149,12 @@ class Interface(tk.Frame):
             relx = 0.11, rely =0.1, width=200, height=25)
 
         # Name
-        ttk.Label(self, text="*Full Name:").place(relx = 0.3, rely =0.1)
+        ttk.Label(self, text="*Full Name:").place(relx = 0.37, rely =0.1)
         ttk.Entry(self, font = ('Arial', 12), textvariable = self.name_text, style="TEntry").place(
-            relx = 0.37, rely =0.1, width=250, height=25)
+            relx = 0.44, rely =0.1, width=250, height=25)
 
         # Gender
-        ttk.Label(self, text="*Gender:").place(relx = 0.6, rely =0.1)
+        ttk.Label(self, text="*Gender:").place(relx = 0.64, rely =0.1)
        
         # Gender Combobox
         self.gender = ttk.Combobox(self, textvariable=self.gender_value, 
@@ -162,7 +162,7 @@ class Interface(tk.Frame):
         self.gender['values'] = ('None', 'Male', 'Female')
         self.gender.current()
         self.gender.place(
-             relx = 0.65, rely =0.1, width=100, height=25)
+             relx = 0.69, rely =0.1, width=100, height=25)
 
         # Age
         ttk.Label(self, text="*Age:").place(relx = 0.77, rely =0.1)
@@ -207,6 +207,33 @@ class Interface(tk.Frame):
         #     relx = 0.1, rely =0.23, width=100, height=25)
 
         # ***********************************
+        ttk.Button(self, text= "Search ID", command= self.auto_fill).place(relx=0.27,rely=0.1)    
+
+    def auto_fill(self):
+        book = load_workbook("stored-data.xlsx")
+        active_book = book.active
+        iterRows = iter(book.active)
+        entered_id = self.id_text.get()
+        for i, row in enumerate(iterRows, 1):
+            if i != 1:
+                rowData = [ cell.value for cell in row ]
+                if entered_id == rowData[0]:
+                    print(rowData[0])
+                    self.id_text.set(rowData[0])
+                    self.name_text.set(rowData[1])
+                    self.gender_value.set(rowData[2])
+                    self.age_value.set(rowData[3])
+                    self.blood_value.set(rowData[4])
+                    self.contact_text.set(rowData[5])
+                    self.address_text.set(rowData[6])
+                    self.city_text.set(rowData[7])
+                    break
+            if i == active_book.max_row:
+                messagebox.showinfo(title = "Error",message = "Patient ID doesnot exists")
+
+        book.close()
+
+
     def clear(self):
         self.id_text.set("")
         self.name_text.set("")
@@ -459,8 +486,8 @@ class Predict(tk.Frame):
         else:
             img = open_image(self.fileName)
             # Load Model
-            self.x = load_learner('F:\\8thproject\\', 'final.pkl') 
-            # self.x = load_learner('F:\\8thproject\\final.pkl') 
+            # self.x = load_learner('F:\\8thproject\\', 'final.pkl') 
+            self.x = load_learner('F:\\8thproject\\','trainfinal_vgg_model_after_fit.pkl') 
             # self.fileName = ""
             
             predict = self.x.predict(img)
