@@ -2,7 +2,8 @@
 import tkinter as tk
 from tkinter import Frame, PhotoImage, StringVar, ttk
 from tkinter import messagebox
-from tkinter.constants import DISABLED, RIDGE
+from tkinter.constants import DISABLED, RIDGE, X
+from tkinter.font import BOLD
 # from fastai.basic_train import load_learner
 # from fastai.vision.image import open_image
 
@@ -48,6 +49,9 @@ class Window(tk.Tk):
     def get_page(self, page_class):
         return self.frames[page_class]
 
+    
+  
+
 class First(tk.Frame):
     """ Main frame of program """
 
@@ -73,54 +77,92 @@ class First(tk.Frame):
         # Add image file
         width = self.winfo_screenwidth()
         height = self.winfo_screenheight()
-        image = Image.open("bg.jpg")
-        if image.size != (width, height):
-            image = image.resize((width, height), Image.ANTIALIAS)
-        bg = ImageTk.PhotoImage(image)
+        image1 = Image.open("knee12_copy.png")
+        if image1.size != (width, height):
+            
+            img1_width, img1_height = image1.size
+            img1_width = int(img1_width / img1_height) * height
+            #img1_height = int(img1_height / img1_width) * width
+
+            image1 = image1.resize((img1_width, height), Image.ANTIALIAS)
+        bg = ImageTk.PhotoImage(image1)
         # Show image using label
         bg_label = tk.Label(self, image = bg)
-        bg_label.place(x=0, y=0, relwidth=1, relheight=1)
+        bg_label.place(x=-1, y=0, relwidth=1, relheight=1)
         bg_label.image = bg
 
         #Create Frame
-        self.box_frame = Frame(self, border= 5, relief= 'raised')
-        self.box_frame.pack()
-        self.box_frame.place(relheight=0.6, relwidth=0.4, relx = 0.3, rely =0.2)
+        self.first_frame = Frame(self, border= 5, relief= 'raised')
+        self.first_frame.pack()
+        self.first_frame.place(relheight=0.7, relwidth=0.45, relx = 0.5, rely =0.15)
 
         # Hospitall name
-        ttk.Label(self.box_frame,font= ('Arial', 25), text="Knee OA Classification").place(relx = 0.2, rely =0.03)
+        ttk.Label(self.first_frame,font= ('Algerian', 25), text="Knee OA Classification").place(relx = 0.19, rely =0.07)
 
         #Add User Button        
-        add_image = Image.open("add_user.png")
+        add_image = Image.open("handsomeAdd.png")
         img_width, img_height = add_image.size
-        add_image = add_image.resize((200, 200*int(img_height/img_width)), Image.ANTIALIAS)
+        add_image = add_image.resize((230, 230*int(img_height/img_width)), Image.ANTIALIAS)
         add_user = ImageTk.PhotoImage(add_image)
-        add_user_btn = tk.Button(self.box_frame,text="Add Patient", 
+        add_user_btn = tk.Button(self.first_frame,text="Add Patient", 
                             image = add_user, 
-                            command= lambda : controller.show_frame(Interface),
+                            #command= lambda : controller.show_frame(Interface),
                             compound="top",
-                            font=('Helvetica', 12),
+                            relief= "raised",
+                            font=('Helvetica', 15, BOLD),
                             activeforeground='white',
-                            activebackground='green'
+                            activebackground='green',
                             )
-        add_user_btn.place(x=30, y=90, relwidth=0.4, relheight=0.6)
+        add_user_btn.place(relx=0.06, rely=0.2, relwidth=0.4, relheight=0.55)
         add_user_btn.image = add_user
+        self.changeOnHover(add_user_btn, 'green', 'snow2')
+
 
         #Existing User Button        
         search_image = Image.open("search_user.jpg")
         img_width, img_height = search_image.size
-        search_image = search_image.resize((200, 200), Image.ANTIALIAS)
+        search_image = search_image.resize((230, 230), Image.ANTIALIAS)
         search_user = ImageTk.PhotoImage(search_image)
-        search_user_btn = tk.Button(self.box_frame,text="Search Patient", 
+        search_user_btn = tk.Button(self.first_frame,text="Search Patient", 
                                 image = search_user, 
-                                command= lambda : controller.show_frame(SearchUser), 
+                                #command= lambda : controller.show_frame(SearchUser), 
                                 compound="top",
-                                font=('Helvetica', 12),
+                                relief= "raised",
+                                font=('Helvetica', 15, BOLD),
                                 activeforeground='white',
-                                activebackground='grey',
+                                activebackground='mediumblue',
                                 )
-        search_user_btn.place(x=280, y=90, relwidth=0.4, relheight=0.6)
+        search_user_btn.place(relx=0.53, rely=0.2, relwidth=0.4, relheight=0.55)
         search_user_btn.image = search_user
+        self.changeOnHover(search_user_btn, 'mediumblue', 'snow2')
+
+        #Exit Button
+        exit_image = Image.open("exit22.png")
+        img_width, img_height = exit_image.size
+        exit_image = exit_image.resize((120, 60), Image.ANTIALIAS)
+        exit_frame = ImageTk.PhotoImage(exit_image)
+        exit_btn = tk.Button(self.first_frame,
+                                #image = exit_frame, 
+                                border = 0, text='Exit',
+                                #command= lambda : quit(), 
+                                font=('Feorgia', 19, BOLD),
+                                foreground='white',
+                                background='black',
+                                activeforeground='white',
+                                activebackground='red4',
+                                )
+        exit_btn.place(relx=0.4, rely=0.85, relwidth=0.2, relheight=0.075)
+        exit_btn.image = exit_frame
+
+    def changeOnHover(self, button, colorOnHover, colorOnLeave):
+  
+        # background on entering widget
+        button.bind("<Enter>", func=lambda e: button.config(
+            background=colorOnHover))
+
+        # background on leaving widget
+        button.bind("<Leave>", func=lambda e: button.config(
+            background = colorOnLeave))
 
 class Interface(tk.Frame):
 
@@ -606,7 +648,7 @@ class Predict(tk.Frame):
             img = open_image(self.fileName)
             # Load Model
             # self.x = load_learner('F:\\8thproject\\', 'final.pkl') 
-            self.x = load_learner('F:\\8thproject\\','trainfinal_vgg_model_after_fit.pkl') 
+            self.x = load_learner('E:\\8th sem project\\Project Final\\final-project\\','trainfinal_vgg_model_after_fit.pkl') 
             # self.fileName = ""
             
             predict = self.x.predict(img)
@@ -678,6 +720,7 @@ def main():
     
     root = Window()
     root.title('Knee OA')
+    #root.configure(bg='green')
     
     width = root.winfo_screenwidth()
     height = root.winfo_screenheight()
