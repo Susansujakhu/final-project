@@ -58,6 +58,9 @@ class First(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
        
+        self.controller = controller
+        # Add image file
+
         menubar = tk.Menu(controller)
         mFile = tk.Menu(menubar, tearoff=False)
         menubar.add_cascade(label="File", menu=mFile)
@@ -73,8 +76,7 @@ class First(tk.Frame):
 
         mHelp.add_command(label="About")
         controller.config(menu=menubar)
-        self.controller = controller
-        # Add image file
+
         width = self.winfo_screenwidth()
         height = self.winfo_screenheight()
         image1 = Image.open("knee12_copy.png")
@@ -168,8 +170,6 @@ class Interface(tk.Frame):
 
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
-       
-        self.makeWidgets()
         menubar = tk.Menu(controller)
         mFile = tk.Menu(menubar, tearoff=False)
         menubar.add_cascade(label="File", menu=mFile)
@@ -186,15 +186,18 @@ class Interface(tk.Frame):
         mHelp.add_command(label="About")
         controller.config(menu=menubar)
         self.controller = controller
+        
+        #***********
+    def tkraise(self):
+        ttk.Button(self, text= "Back", command= lambda : self.controller.show_frame(First)).place(relx = 0, rely =0)
+        self.makeWidgets()
         # Hospitall name
         ttk.Label(self,font= ('Arial', 25), text="Knee OA Classification").place(relx = 0.3, rely =0.01)
-
         # ******* Buttons ADD and Send ***********
         ttk.Button(self, text= "Save & Send", command= self.add_data).place(
             relx=0.7,rely=0.27)
         ttk.Button(self, text= "Clear", command= self.clear).place(relx=0.8,rely=0.27)
-        #***********
-        
+        tk.Frame.tkraise(self)
 
     def makeWidgets(self):
         self.id_text = StringVar()
@@ -344,6 +347,7 @@ class Interface(tk.Frame):
                 res = messagebox.askquestion(title = "Save",message = "Data Saved. Do you want to send for Prediction?")
                 if res == 'yes':
                     self.selected_id = self.id_text.get()
+                    self.from_form = True
                     self.controller.show_frame(Predict)
             
             else:
@@ -360,9 +364,11 @@ class SearchUser(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         self.controller = controller
-        self.tree()
 
-        ttk.Button(self, text= "Send", command= lambda : self.goto_predict(controller)).place(relx=0.8,rely=0.9)
+    def tkraise(self):
+        self.trees()
+        ttk.Button(self, text= "Back", command= lambda : self.controller.show_frame(First)).place(relx = 0, rely =0)
+        ttk.Button(self, text= "Send", command= lambda : self.goto_predict(self.controller)).place(relx=0.8,rely=0.9)
 
         #ttk.Button(self, text= "Send", command= lambda : controller.show_frame(Predict)).place(relx=0.8,rely=0.9)
         
@@ -380,11 +386,12 @@ class SearchUser(tk.Frame):
         self.search_by['values'] = ('Name', 'Address', 'City')
         self.search_by.current(0)
         self.search_by.place(
-             relx = 0.72, rely =0.35, width=100, height=25)
+            relx = 0.72, rely =0.35, width=100, height=25)
 
         ttk.Entry(self, font = ('Arial', 12), textvariable = self.search_text).place(
             relx = 0.8, rely =0.35, width=150, height=25)
         self.search_text.trace("w",self.filterSearch)
+        tk.Frame.tkraise(self)
 
     def filterSearch(self, *args):
         self.category = self.searchBy.get()
@@ -406,7 +413,7 @@ class SearchUser(tk.Frame):
 
                 self.tree.insert("", 0, values=search_var)
 
-    def tree(self):
+    def trees(self):
 
         frame1 = Frame(self)
         frame1.pack()
@@ -551,7 +558,11 @@ class SearchUser(tk.Frame):
                 self.row_item = self.tree.item(item)
             self.selected_row = self.row_item['values']
             # print(self.selected_row)
-            controller.show_frame(Predict)
+            # self.from_form = False
+            self.get_data = self.controller.get_page(Interface)
+            self.get_data.from_form = False
+            self.selected_id = self.selected_row[0]
+            self.controller.show_frame(Predict)
         except:
             messagebox.showinfo(title = "Error",message = "Select any data first")
 
@@ -562,8 +573,10 @@ class Predict(tk.Frame):
 
 
         self.controller = controller
-        self.get_data = self.controller.get_page(Interface)
-       
+        # self.get_data = self.controller.get_page(SearchUser)
+
+
+    def tkraise(self):
         style = ttk.Style()
         style.configure('W.TLabel', font=('Helvetica', 20))
 
@@ -574,15 +587,29 @@ class Predict(tk.Frame):
         # Predict Button
         ttk.Button(self, text= "Predict", 
         command= self.showResult).place(relx = 0.26, rely = 0.6)
-
-    def tkraise(self):
-        print(self.get_data.selected_id)
-        self.col_name = self.get_data.column
-        self.row_data = self.get_data.selected_row
+        self.get_data = self.controller.get_page(Interface)
+        print(self.get_data.from_form)
+        if self.get_data.from_form == False:
+            self.get_data = self.controller.get_page(SearchUser)
+        else:
+            self.get_data = self.controller.get_page(Interface)
+        # print(self.get_data.selected_id)
+        self.selected_id = self.get_data.selected_id
+        book = load_workbook("data.xlsx")
+        active_book = book.active
+        iterRows = iter(book.active)
+        for i, row in enumerate(iterRows, 1):
+            if i != 1:
+                rowData = [ cell.value for cell in row ]
+                if self.selected_id == rowData[0]:
+                    self.row_data = rowData
+                    break
+        self.column = ['Patient ID', 'Name', 'Gender', 'Age', 'Blood Group', 'Contact', 'Address', 'City', 'Description', 'Image', 'Result', 'Date Created']
+        self.col_name = self.column
+        
         #print(self.row)
         #print(self.get_data.item_row)
-        tk.Frame.tkraise(self)
-
+        
         
         self.image_frame = Frame(self, border= 10, relief= RIDGE)
         self.image_frame.pack()
@@ -604,7 +631,7 @@ class Predict(tk.Frame):
 
 
         # Move to Previous Frame
-        ttk.Button(frame1, text= "Back", command= lambda : self.controller.show_frame(Interface)).place(relx = 0, rely =0)
+        ttk.Button(frame1, text= "Back", command= lambda : self.controller.show_frame(Interface) if self.get_data.from_form == True else self.controller.show_frame(Interface)).place(relx = 0, rely =0)
         
 
         ttk.Label(self, text="Details", style = 'W.TLabel').place(relx = 0.1, rely =0.1)
@@ -620,7 +647,7 @@ class Predict(tk.Frame):
             if m == 8:
                 break
 
-        
+        tk.Frame.tkraise(self)
         
 
     def fileOpen(self):
@@ -714,6 +741,9 @@ class Predict(tk.Frame):
     def download(self):
         self.save_result()
         report_generator.makePDF(self)
+
+    
+
 
 
 def main():
