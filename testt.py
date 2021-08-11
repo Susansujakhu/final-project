@@ -108,7 +108,7 @@ class First(tk.Frame):
         add_user = ImageTk.PhotoImage(add_image)
         add_user_btn = tk.Button(self.first_frame,text="Add Patient", 
                             image = add_user, 
-                            #command= lambda : controller.show_frame(Interface),
+                            command= lambda : controller.show_frame(Interface),
                             compound="top",
                             relief= "raised",
                             font=('Helvetica', 15, BOLD),
@@ -127,7 +127,7 @@ class First(tk.Frame):
         search_user = ImageTk.PhotoImage(search_image)
         search_user_btn = tk.Button(self.first_frame,text="Search Patient", 
                                 image = search_user, 
-                                #command= lambda : controller.show_frame(SearchUser), 
+                                command= lambda : controller.show_frame(SearchUser), 
                                 compound="top",
                                 relief= "raised",
                                 font=('Helvetica', 15, BOLD),
@@ -139,22 +139,16 @@ class First(tk.Frame):
         self.changeOnHover(search_user_btn, 'mediumblue', 'snow2')
 
         #Exit Button
-        exit_image = Image.open("exit22.png")
-        img_width, img_height = exit_image.size
-        exit_image = exit_image.resize((120, 60), Image.ANTIALIAS)
-        exit_frame = ImageTk.PhotoImage(exit_image)
         exit_btn = tk.Button(self.first_frame,
-                                #image = exit_frame, 
                                 border = 0, text='Exit',
-                                #command= lambda : quit(), 
+                                command= lambda : quit(), 
                                 font=('Feorgia', 19, BOLD),
                                 foreground='white',
                                 background='black',
                                 activeforeground='white',
-                                activebackground='red4',
+                                activebackground='red4'
                                 )
         exit_btn.place(relx=0.4, rely=0.85, relwidth=0.2, relheight=0.075)
-        exit_btn.image = exit_frame
 
     def changeOnHover(self, button, colorOnHover, colorOnLeave):
   
