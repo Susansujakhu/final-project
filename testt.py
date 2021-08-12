@@ -211,11 +211,9 @@ class Interface(tk.Frame):
         
         #***********
     def tkraise(self):
-        
-        
         # Hospitall name
         ttk.Button(self, text= "Back", command= lambda : self.controller.show_frame(First)).place(relx = 0.03, rely = 0.02, relwidth=0.08, relheight=0.04)
-        ttk.Label(self, font= ('Algerian', 25, BOLD), text="Add Patient").place(relx = 0.3, rely =0.01)
+        ttk.Label(self, font= ('Algerian', 25, BOLD), text="Add Patient",style='Interface.TLabel').place(relx = 0.3, rely =0.01)
         self.makeWidgets()
         # ******* Buttons BACK, ADD and Send ***********
 
@@ -239,7 +237,7 @@ class Interface(tk.Frame):
         style = entryStyle = labelStyle = buttonStyle = comboBoxStyle = ttk.Style()
         style.configure('.', font=('Helvetica', 12))
         entryStyle.configure('TEntry',foreground = 'green')
-        labelStyle.configure('TLabel', background = 'black', foreground = 'white', font = ('Times New Roman', 14, BOLD))
+        labelStyle.configure('Interface.TLabel', background = 'black', foreground = 'white', font = ('Times New Roman', 14, BOLD))
         buttonStyle.configure('TButton',background='#232323', foreground = 'black', borderwidth=1, focusthickness=3, focuscolor='green')
         buttonStyle.map('TButton', background=[('active','green')])
         comboBoxStyle.configure('TCombo', font = ('Arial', 11))
@@ -259,17 +257,17 @@ class Interface(tk.Frame):
         D_relY = City_relY + addY
 
         # Patient Id
-        ttk.Label(self, text="*Patient Id:", style='TLabel').place(relx = relX, rely =P_relY)
+        ttk.Label(self, text="*Patient Id:", style='Interface.TLabel').place(relx = relX, rely =P_relY)
         ttk.Entry(self, font = ('Arial', 12), textvariable = self.id_text, style="TEntry").place(
             relx = entryRelX, rely =P_relY, width=220, height=entryHeight)
 
         # Name
-        ttk.Label(self, text="*Full Name:", style='TLabel').place(relx = relX, rely =N_relY)
+        ttk.Label(self, text="*Full Name:", style='Interface.TLabel').place(relx = relX, rely =N_relY)
         ttk.Entry(self, font = ('Arial', 12), textvariable = self.name_text, style="TEntry").place(
             relx = entryRelX, rely =N_relY, width = entryWidth, height=entryHeight)
 
         # Gender
-        ttk.Label(self, text="*Gender:", style='TLabel').place(relx = relX, rely =G_relY)
+        ttk.Label(self, text="*Gender:", style='Interface.TLabel').place(relx = relX, rely =G_relY)
        
         # Gender Combobox
         self.gender = ttk.Combobox(self, textvariable=self.gender_value, 
@@ -280,14 +278,14 @@ class Interface(tk.Frame):
              relx = entryRelX, rely =G_relY, width=130, height=entryHeight)
 
         # Age
-        ttk.Label(self, text="*Age:", style='TLabel').place(relx = relX, rely = A_relY)
+        ttk.Label(self, text="*Age:", style='Interface.TLabel').place(relx = relX, rely = A_relY)
         ttk.Entry(self, font = ('Arial', 12), textvariable = self.age_value).place(
             relx = entryRelX, rely = A_relY, width=90, height=entryHeight)
         
         #********************************************************************
 
         # Blood Group
-        ttk.Label(self, text="Blood Group:", style='TLabel').place(relx = relX + 0.17, rely =A_relY)
+        ttk.Label(self, text="Blood Group:", style='Interface.TLabel').place(relx = relX + 0.17, rely =A_relY)
         self.blood_group = ttk.Combobox(self, textvariable=self.blood_value, 
                                 state='readonly')
         self.blood_group['values'] = ('A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-')
@@ -296,23 +294,23 @@ class Interface(tk.Frame):
             relx = relX + 0.2558, rely = A_relY, width=90, height=entryHeight)
 
         # Contact Number
-        ttk.Label(self, text="Contact:", style='TLabel').place(relx = relX, rely = C_relY)
+        ttk.Label(self, text="Contact:", style='Interface.TLabel').place(relx = relX, rely = C_relY)
         ttk.Entry(self, font = ('Arial', 12), textvariable = self.contact_text, style="TEntry").place(
             relx = entryRelX, rely = C_relY, width=entryWidth, height=entryHeight)
 
         # Address
-        ttk.Label(self, text="Address:", style='TLabel').place(relx = relX, rely = Add_relY)
+        ttk.Label(self, text="Address:", style='Interface.TLabel').place(relx = relX, rely = Add_relY)
         ttk.Entry(self, font = ('Arial', 12), textvariable = self.address_text).place(
             relx = entryRelX, rely = Add_relY, width=entryWidth, height=entryHeight)
         
         # City
-        ttk.Label(self, text="City:", style='TLabel').place(relx = relX, rely = City_relY)
+        ttk.Label(self, text="City:", style='Interface.TLabel').place(relx = relX, rely = City_relY)
         ttk.Entry(self, font = ('Arial', 12), textvariable = self.city_text).place(
             relx = entryRelX, rely = City_relY, width=entryWidth, height=entryHeight)
 
         # Description
         from tkinter.scrolledtext import ScrolledText
-        ttk.Label(self, text="Description:", style='TLabel').place(relx = relX, rely =D_relY)
+        ttk.Label(self, text="Description:", style='Interface.TLabel').place(relx = relX, rely =D_relY)
         self.description = ScrolledText(self, wrap=tk.WORD,
                                       width=42, height=4, border = 2,
                                       font=("Times New Roman", 15))
@@ -652,8 +650,10 @@ class Predict(tk.Frame):
         print(self.get_data.from_form)
         if self.get_data.from_form == False:
             self.get_data = self.controller.get_page(SearchUser)
+            self.back_flag = "search"
         else:
             self.get_data = self.controller.get_page(Interface)
+            self.back_flag = "interface"
         # print(self.get_data.selected_id)
         self.selected_id = self.get_data.selected_id
         book = load_workbook("data.xlsx")
@@ -692,7 +692,7 @@ class Predict(tk.Frame):
 
 
         # Move to Previous Frame
-        ttk.Button(frame1, text= "Back", command= lambda : self.controller.show_frame(Interface) if self.get_data.from_form == True else self.controller.show_frame(Interface)).place(relx = 0, rely =0)
+        ttk.Button(frame1, text= "Back", command= lambda : self.controller.show_frame(Interface) if self.back_flag == "interface" else self.controller.show_frame(SearchUser)).place(relx = 0, rely =0)
         
 
         ttk.Label(self, text="Details", style = 'W.TLabel').place(relx = 0.1, rely =0.1)
