@@ -2,6 +2,8 @@
 import tkinter as tk
 from tkinter import Frame, PhotoImage, StringVar, ttk
 from tkinter import messagebox
+from tkinter import font
+#from tkinter import font
 from tkinter.constants import DISABLED, RIDGE, X
 from tkinter.font import BOLD
 # from fastai.basic_train import load_learner
@@ -70,6 +72,9 @@ class First(tk.Frame):
         mFile.add_separator()
         mFile.add_command(label="Exit", command=lambda: quit())
 
+        #mFile.add_separator()
+        #mFile.add_command(label="Refresh", command=lambda: self.refresh())
+
         # Help Section
         mHelp = tk.Menu(menubar, tearoff=False)
         menubar.add_cascade(label="Help", menu=mHelp)
@@ -79,15 +84,15 @@ class First(tk.Frame):
 
         width = self.winfo_screenwidth()
         height = self.winfo_screenheight()
-        image1 = Image.open("knee12_copy.png")
+        image1 = Image.open("kneeColorfulLeft.png")
         if image1.size != (width, height):
             
             img1_width, img1_height = image1.size
             img1_width = int(img1_width / img1_height) * height
-            #img1_height = int(img1_height / img1_width) * width
 
-            image1 = image1.resize((img1_width, height), Image.ANTIALIAS)
+        image1 = image1.resize((width, height), Image.ANTIALIAS)
         bg = ImageTk.PhotoImage(image1)
+
         # Show image using label
         bg_label = tk.Label(self, image = bg)
         bg_label.place(x=-1, y=0, relwidth=1, relheight=1)
@@ -96,10 +101,10 @@ class First(tk.Frame):
         #Create Frame
         self.first_frame = Frame(self, border= 5, relief= 'raised')
         self.first_frame.pack()
-        self.first_frame.place(relheight=0.7, relwidth=0.45, relx = 0.5, rely =0.15)
+        self.first_frame.place(relheight=0.7, relwidth=0.45, relx = 0.45, rely =0.15)
 
         # Hospitall name
-        ttk.Label(self.first_frame,font= ('Algerian', 25), text="Knee OA Classification").place(relx = 0.19, rely =0.07)
+        ttk.Label(self.first_frame,font= ('Algerian', 25, BOLD), text="Knee OA Classification").place(relx = 0.19, rely =0.06)
 
         #Add User Button        
         add_image = Image.open("handsomeAdd.png")
@@ -107,17 +112,17 @@ class First(tk.Frame):
         add_image = add_image.resize((230, 230*int(img_height/img_width)), Image.ANTIALIAS)
         add_user = ImageTk.PhotoImage(add_image)
         add_user_btn = tk.Button(self.first_frame,text="Add Patient", 
-                            image = add_user, 
-                            command= lambda : controller.show_frame(Interface),
-                            compound="top",
-                            relief= "raised",
-                            font=('Helvetica', 15, BOLD),
-                            activeforeground='white',
-                            activebackground='green',
-                            )
+                                image = add_user, 
+                                command= lambda : controller.show_frame(Interface), 
+                                compound="top",
+                                relief= "raised",
+                                font=('Helvetica', 15, BOLD),
+                                activeforeground='white',
+                                activebackground='green',
+                                )
         add_user_btn.place(relx=0.06, rely=0.2, relwidth=0.4, relheight=0.55)
         add_user_btn.image = add_user
-        self.changeOnHover(add_user_btn, 'green', 'snow2')
+        self.changeOnHover(add_user_btn, 'green', 'snow2', 'white', 'black')
 
 
         #Existing User Button        
@@ -136,34 +141,41 @@ class First(tk.Frame):
                                 )
         search_user_btn.place(relx=0.53, rely=0.2, relwidth=0.4, relheight=0.55)
         search_user_btn.image = search_user
-        self.changeOnHover(search_user_btn, 'mediumblue', 'snow2')
+        self.changeOnHover(search_user_btn, 'mediumblue', 'snow2', 'white', 'black')
 
         #Exit Button
         exit_btn = tk.Button(self.first_frame,
                                 border = 0, text='Exit',
                                 command= lambda : quit(), 
-                                font=('Feorgia', 19, BOLD),
+                                font=('Georgia', 19, BOLD),
                                 foreground='white',
                                 background='black',
                                 activeforeground='white',
                                 activebackground='red4'
                                 )
-        exit_btn.place(relx=0.4, rely=0.85, relwidth=0.2, relheight=0.075)
+        exit_btn.place(relx=0.4, rely=0.83, relwidth=0.2, relheight=0.075)
+        self.changeOnHover(exit_btn, 'red4', 'black', 'white', 'white')
 
-    def changeOnHover(self, button, colorOnHover, colorOnLeave):
+    def changeOnHover(self, button, colorOnHover, colorOnLeave, fgHover, fgLeave):
   
         # background on entering widget
         button.bind("<Enter>", func=lambda e: button.config(
-            background=colorOnHover))
+            background=colorOnHover, foreground = fgHover))
 
         # background on leaving widget
         button.bind("<Leave>", func=lambda e: button.config(
-            background = colorOnLeave))
+            background = colorOnLeave, foreground = fgLeave))
 
+    '''def refresh(self):
+        self.destroy()
+        self.__init__()'''
+    
 class Interface(tk.Frame):
 
     def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent)
+        tk.Frame.__init__(self, parent) #, bg='black')
+        parent.configure(background='black')
+
         menubar = tk.Menu(controller)
         mFile = tk.Menu(menubar, tearoff=False)
         menubar.add_cascade(label="File", menu=mFile)
@@ -180,17 +192,37 @@ class Interface(tk.Frame):
         mHelp.add_command(label="About")
         controller.config(menu=menubar)
         self.controller = controller
+
+        width = self.winfo_screenwidth()
+        height = self.winfo_screenheight()
+        image1 = Image.open("kneeSimpleRight.png")
+        if image1.size != (width, height):
+                
+            img1_width, img1_height = image1.size
+            img1_width = int(img1_width / img1_height) * height
+            #img1_height = int(img1_height / img1_width) * width
+
+        image1 = image1.resize((width, height), Image.ANTIALIAS)
+        bg = ImageTk.PhotoImage(image1)
+        # Show image using label
+        bg_label = tk.Label(self, image = bg)
+        bg_label.place(x=-1, y=0, relwidth=1, relheight=1)
+        bg_label.image = bg
         
         #***********
     def tkraise(self):
-        ttk.Button(self, text= "Back", command= lambda : self.controller.show_frame(First)).place(relx = 0, rely =0)
-        self.makeWidgets()
+        
+        
         # Hospitall name
-        ttk.Label(self,font= ('Arial', 25), text="Knee OA Classification").place(relx = 0.3, rely =0.01)
-        # ******* Buttons ADD and Send ***********
-        ttk.Button(self, text= "Save & Send", command= self.add_data).place(
-            relx=0.7,rely=0.27)
-        ttk.Button(self, text= "Clear", command= self.clear).place(relx=0.8,rely=0.27)
+        ttk.Button(self, text= "Back", command= lambda : self.controller.show_frame(First)).place(relx = 0.03, rely = 0.02, relwidth=0.08, relheight=0.04)
+        ttk.Label(self, font= ('Algerian', 25, BOLD), text="Add Patient").place(relx = 0.3, rely =0.01)
+        self.makeWidgets()
+        # ******* Buttons BACK, ADD and Send ***********
+
+        btnY = 0.9
+        
+        tk.Button(self, text= "Save", background= 'green', foreground= 'white', relief='raised', font = ('Helvetika', 14, BOLD), command= self.add_data).place(relx=0.18, rely=btnY, relwidth=0.08, relheight=0.05)
+        tk.Button(self, text= "Clear", background= 'red', foreground= 'white', relief='raised', font = ('Helvetika', 14, BOLD), command= self.clear).place(relx=0.3, rely = btnY, relwidth=0.08, relheight=0.05)
         tk.Frame.tkraise(self)
 
     def makeWidgets(self):
@@ -204,78 +236,113 @@ class Interface(tk.Frame):
         self.blood_value = StringVar()
         # self.description = StringVar()
         
-        style = entryStyle = labelStyle = buttonStyle = ttk.Style()
+        style = entryStyle = labelStyle = buttonStyle = comboBoxStyle = ttk.Style()
         style.configure('.', font=('Helvetica', 12))
         entryStyle.configure('TEntry',foreground = 'green')
-        labelStyle.configure('TLable', )
+        labelStyle.configure('TLabel', background = 'black', foreground = 'white', font = ('Times New Roman', 14, BOLD))
         buttonStyle.configure('TButton',background='#232323', foreground = 'black', borderwidth=1, focusthickness=3, focuscolor='green')
         buttonStyle.map('TButton', background=[('active','green')])
+        comboBoxStyle.configure('TCombo', font = ('Arial', 11))
+
+        entryWidth = 320
+        entryHeight = 27
+        addY = 0.07
+        relX = 0.097
+        entryRelX = relX + 0.085
+        P_relY = 0.15
+        N_relY = P_relY + addY
+        G_relY = N_relY + addY
+        A_relY = G_relY + addY
+        C_relY = A_relY + addY
+        Add_relY = C_relY + addY
+        City_relY = Add_relY + addY
+        D_relY = City_relY + addY
 
         # Patient Id
-        ttk.Label(self, text="*Patient Id:").place(relx = 0.05, rely =0.1)
+        ttk.Label(self, text="*Patient Id:", style='TLabel').place(relx = relX, rely =P_relY)
         ttk.Entry(self, font = ('Arial', 12), textvariable = self.id_text, style="TEntry").place(
-            relx = 0.11, rely =0.1, width=200, height=25)
+            relx = entryRelX, rely =P_relY, width=220, height=entryHeight)
 
         # Name
-        ttk.Label(self, text="*Full Name:").place(relx = 0.37, rely =0.1)
+        ttk.Label(self, text="*Full Name:", style='TLabel').place(relx = relX, rely =N_relY)
         ttk.Entry(self, font = ('Arial', 12), textvariable = self.name_text, style="TEntry").place(
-            relx = 0.44, rely =0.1, width=250, height=25)
+            relx = entryRelX, rely =N_relY, width = entryWidth, height=entryHeight)
 
         # Gender
-        ttk.Label(self, text="*Gender:").place(relx = 0.64, rely =0.1)
+        ttk.Label(self, text="*Gender:", style='TLabel').place(relx = relX, rely =G_relY)
        
         # Gender Combobox
         self.gender = ttk.Combobox(self, textvariable=self.gender_value, 
                                 state='readonly')
-        self.gender['values'] = ('None', 'Male', 'Female')
-        self.gender.current(0)
+        self.gender['values'] = ('Male', 'Female', 'Others')
+        #self.gender.current(0)
         self.gender.place(
-             relx = 0.69, rely =0.1, width=100, height=25)
+             relx = entryRelX, rely =G_relY, width=130, height=entryHeight)
 
         # Age
-        ttk.Label(self, text="*Age:").place(relx = 0.77, rely =0.1)
+        ttk.Label(self, text="*Age:", style='TLabel').place(relx = relX, rely = A_relY)
         ttk.Entry(self, font = ('Arial', 12), textvariable = self.age_value).place(
-            relx = 0.8, rely =0.1, width=100, height=25)
+            relx = entryRelX, rely = A_relY, width=90, height=entryHeight)
         
         #********************************************************************
 
         # Blood Group
-        ttk.Label(self, text="Blood Group:").place(relx = 0.05, rely =0.18)
+        ttk.Label(self, text="Blood Group:", style='TLabel').place(relx = relX + 0.17, rely =A_relY)
         self.blood_group = ttk.Combobox(self, textvariable=self.blood_value, 
                                 state='readonly')
         self.blood_group['values'] = ('A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-')
         self.blood_group.current()
         self.blood_group.place(
-            relx = 0.13, rely =0.18, width=150, height=25)
+            relx = relX + 0.2558, rely = A_relY, width=90, height=entryHeight)
 
         # Contact Number
-        ttk.Label(self, text="Contact No.:").place(relx = 0.3, rely =0.18)
+        ttk.Label(self, text="Contact:", style='TLabel').place(relx = relX, rely = C_relY)
         ttk.Entry(self, font = ('Arial', 12), textvariable = self.contact_text, style="TEntry").place(
-            relx = 0.37, rely =0.18, width=200, height=25)
+            relx = entryRelX, rely = C_relY, width=entryWidth, height=entryHeight)
 
         # Address
-        ttk.Label(self, text="Address:").place(relx = 0.55, rely =0.18)
+        ttk.Label(self, text="Address:", style='TLabel').place(relx = relX, rely = Add_relY)
         ttk.Entry(self, font = ('Arial', 12), textvariable = self.address_text).place(
-            relx = 0.6, rely =0.18, width=200, height=25)
+            relx = entryRelX, rely = Add_relY, width=entryWidth, height=entryHeight)
         
         # City
-        ttk.Label(self, text="City:").place(relx = 0.77, rely =0.18)
+        ttk.Label(self, text="City:", style='TLabel').place(relx = relX, rely = City_relY)
         ttk.Entry(self, font = ('Arial', 12), textvariable = self.city_text).place(
-            relx = 0.8, rely =0.18, width=100, height=25)
+            relx = entryRelX, rely = City_relY, width=entryWidth, height=entryHeight)
 
         # Description
         from tkinter.scrolledtext import ScrolledText
-        ttk.Label(self, text="Description:").place(relx = 0.05, rely =0.25)
+        ttk.Label(self, text="Description:", style='TLabel').place(relx = relX, rely =D_relY)
         self.description = ScrolledText(self, wrap=tk.WORD,
-                                      width=40, height=4,
+                                      width=42, height=4, border = 2,
                                       font=("Times New Roman", 15))
         self.description.place(
-            relx = 0.13, rely =0.25)
+            relx = relX, rely = D_relY + 0.06)
         # ttk.(self, font = ('Arial', 12), textvariable = self.description).place(
         #     relx = 0.1, rely =0.23, width=100, height=25)
 
         # ***********************************
-        ttk.Button(self, text= "Search ID", command= self.auto_fill).place(relx=0.27,rely=0.1)    
+        # searchId_btn = ttk.Button(self, text='Search ID', 
+        #                             font=('Arial', 19, BOLD),
+        #                             foreground='white',
+        #                             background='black',
+        #                             activeforeground='white',
+        #                             activebackground='red4',
+        #                             command= self.auto_fill
+        #                         )
+        # searchId_btn.place(relx = 0.28, rely = 0.1)
+        # self.changeOnHover(searchId_btn, 'red4', 'black')
+       
+        #ttk.Button(self, text= 'Search ID', command= self.auto_fill).place(relx = 0.28, rely = 0.11, relwidth=0.05, relheight=0.03)    
+        #ttk.Button(self, text= "Search ID", font= ('Arial', 10), command= self.auto_fill).place(relx = 0.28, rely = 0.1)    
+
+        tk.Button(self, text="Search ID",  
+                            command= self.auto_fill,
+                            relief= "raised",
+                            font=('Arial', 10, BOLD),
+                            activeforeground='white',
+                            activebackground='green',
+                            ).place(relx = relX + 0.26, rely = P_relY, relwidth=0.06, relheight=0.035)    
 
     def auto_fill(self):
         book = load_workbook("stored-data.xlsx")
@@ -509,7 +576,7 @@ class SearchUser(tk.Frame):
         child_id = self.tree.get_children()[-1]
         self.tree.focus(child_id)
         self.tree.selection_set(child_id)
-        res = messagebox.askquestion(title = "Save",message = "Data Saved. Do you want to send for Prediction?")
+        res = messagebox.askquestion(title = "Save", message = "Data Saved. Do you want to send for Prediction?")
         if res == 'yes':
             self.goto_predict(self.controller)
         # else:
@@ -750,7 +817,7 @@ def main():
     height = root.winfo_screenheight()
     root.geometry('%dx%d+0+0'% (width, height))
     root.state('zoomed')
-    root.resizable(False,False)
+    #root.resizable(False,False)
     # root.iconbitmap('./assets/pythontutorial.ico')
     root.bind('<Key-Escape>', lambda event: quit())
     root.update()
