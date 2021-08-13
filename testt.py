@@ -214,15 +214,8 @@ class Interface(tk.Frame):
         
         
         # Hospitall name
-        ttk.Button(self, text= "Back", command= lambda : self.controller.show_frame(First)).place(relx = 0.03, rely = 0.02, relwidth=0.08, relheight=0.04)
-        ttk.Label(self, font= ('Algerian', 25, BOLD), text="Add Patient").place(relx = 0.3, rely =0.01)
+        ttk.Label(self, text="Add Patient", font= ('Algerian', 25, BOLD),foreground = 'white').place(relx = 0.15, rely =0.04)
         self.makeWidgets()
-        # ******* Buttons BACK, ADD and Send ***********
-
-        btnY = 0.9
-        
-        tk.Button(self, text= "Save", background= 'green', foreground= 'white', relief='raised', font = ('Helvetika', 14, BOLD), command= self.add_data).place(relx=0.18, rely=btnY, relwidth=0.08, relheight=0.05)
-        tk.Button(self, text= "Clear", background= 'red', foreground= 'white', relief='raised', font = ('Helvetika', 14, BOLD), command= self.clear).place(relx=0.3, rely = btnY, relwidth=0.08, relheight=0.05)
         tk.Frame.tkraise(self)
 
     def makeWidgets(self):
@@ -247,7 +240,7 @@ class Interface(tk.Frame):
         entryWidth = 320
         entryHeight = 27
         addY = 0.07
-        relX = 0.097
+        relX = 0.095
         entryRelX = relX + 0.085
         P_relY = 0.15
         N_relY = P_relY + addY
@@ -257,11 +250,21 @@ class Interface(tk.Frame):
         Add_relY = C_relY + addY
         City_relY = Add_relY + addY
         D_relY = City_relY + addY
+        btnX = 0.15
+        btnY = D_relY + 0.25
 
         # Patient Id
         ttk.Label(self, text="*Patient Id:", style='TLabel').place(relx = relX, rely =P_relY)
         ttk.Entry(self, font = ('Arial', 12), textvariable = self.id_text, style="TEntry").place(
             relx = entryRelX, rely =P_relY, width=220, height=entryHeight)
+
+        tk.Button(self, text="Search ID",  
+                            command= self.auto_fill,
+                            relief= "raised",
+                            font=('Arial', 10, BOLD),
+                            activeforeground='white',
+                            activebackground='green',
+                            ).place(relx = relX + 0.26, rely = P_relY, relwidth=0.06, relheight=0.035)   
 
         # Name
         ttk.Label(self, text="*Full Name:", style='TLabel').place(relx = relX, rely =N_relY)
@@ -316,33 +319,58 @@ class Interface(tk.Frame):
         self.description = ScrolledText(self, wrap=tk.WORD,
                                       width=42, height=4, border = 2,
                                       font=("Times New Roman", 15))
-        self.description.place(
-            relx = relX, rely = D_relY + 0.06)
-        # ttk.(self, font = ('Arial', 12), textvariable = self.description).place(
-        #     relx = 0.1, rely =0.23, width=100, height=25)
+        self.description.place(relx = relX, rely = D_relY + 0.06)
 
-        # ***********************************
-        # searchId_btn = ttk.Button(self, text='Search ID', 
-        #                             font=('Arial', 19, BOLD),
-        #                             foreground='white',
-        #                             background='black',
-        #                             activeforeground='white',
-        #                             activebackground='red4',
-        #                             command= self.auto_fill
-        #                         )
-        # searchId_btn.place(relx = 0.28, rely = 0.1)
-        # self.changeOnHover(searchId_btn, 'red4', 'black')
-       
-        #ttk.Button(self, text= 'Search ID', command= self.auto_fill).place(relx = 0.28, rely = 0.11, relwidth=0.05, relheight=0.03)    
-        #ttk.Button(self, text= "Search ID", font= ('Arial', 10), command= self.auto_fill).place(relx = 0.28, rely = 0.1)    
+        # ******* Buttons BACK, ADD and Send *********** 
+        #Back Button        
+        back_image = Image.open("back3.png")
+        back_image = back_image.resize((30, 25), Image.ANTIALIAS)
+        back = ImageTk.PhotoImage(back_image)
+        back_btn = tk.Button(self, image = back, 
+                                borderwidth = 0,
+                                command= lambda : self.controller.show_frame(First), 
+                                background='black',
+                                )
+        back_btn.place(relx = relX - 0.08, rely = P_relY - 0.12, width=40, height=35)
+        back_btn.image = back   
 
-        tk.Button(self, text="Search ID",  
-                            command= self.auto_fill,
+        saveBtn = tk.Button(self, text= "Save",
+                            background= 'forestgreen',
+                            foreground= 'white',
+                            relief='raised',
+                            borderwidth = 0,
+                            font = ('Times New Roman', 14, BOLD),
+                            command= self.add_data)
+        saveBtn.place(relx=btnX, rely=btnY, relwidth=0.08, relheight=0.05)
+        self.changeOnHover(saveBtn, 'darkgreen', 'forestgreen', 'white', 'white')
+
+        clearBtn = tk.Button(self, text= "Clear",
+                            background= 'red', 
+                            foreground= 'white',
+                            relief='raised',
+                            borderwidth = 0,
+                            font = ('Times New Roman', 14, BOLD),
+                            command= self.clear)
+        clearBtn.place(relx=btnX + 0.1, rely = btnY, relwidth=0.08, relheight=0.05)
+        self.changeOnHover(clearBtn, 'red4', 'red', 'white', 'white')
+
+        #tk.Button(self, text= "Back", font=('Arial', 10, BOLD),command= lambda : self.controller.show_frame(First)).place(relx = relX - 0.06, rely = P_relY - 0.12, relwidth=0.08, relheight=0.04)
+        tk.Button(self, text="Browse All",
                             relief= "raised",
+                            borderwidth = 0,
                             font=('Arial', 10, BOLD),
-                            activeforeground='white',
-                            activebackground='green',
-                            ).place(relx = relX + 0.26, rely = P_relY, relwidth=0.06, relheight=0.035)    
+                            command= lambda : self.controller.show_frame(SearchUser)
+                            ).place(relx = relX + 0.3, rely = P_relY - 0.12, relwidth=0.07, relheight=0.04)  
+
+    def changeOnHover(self, button, colorOnHover, colorOnLeave, fgHover, fgLeave):
+  
+        # background on entering widget
+        button.bind("<Enter>", func=lambda e: button.config(
+            background=colorOnHover, foreground = fgHover))
+
+        # background on leaving widget
+        button.bind("<Leave>", func=lambda e: button.config(
+            background = colorOnLeave, foreground = fgLeave))
 
     def auto_fill(self):
         book = load_workbook("stored-data.xlsx")
@@ -428,13 +456,24 @@ class SearchUser(tk.Frame):
 
     def tkraise(self):
         self.trees()
-        ttk.Button(self, text= "Back", command= lambda : self.controller.show_frame(First)).place(relx = 0, rely =0)
-        ttk.Button(self, text= "Send", command= lambda : self.goto_predict(self.controller)).place(relx=0.8,rely=0.9)
+        #Back Button        
+        back_image = Image.open("back3.png")
+        back_image = back_image.resize((30, 25), Image.ANTIALIAS)
+        back = ImageTk.PhotoImage(back_image)
+        back_btn = tk.Button(self, image = back, 
+                                borderwidth = 0,
+                                command= lambda : self.controller.show_frame(First), 
+                                background='black',
+                                )
+        back_btn.place(relx = 0.01, rely = 0.01, width=40, height=35)
+        back_btn.image = back
+        #ttk.Button(self, text= "Back", command= lambda : self.controller.show_frame(First)).place(relx = 0, rely =0)
+        tk.Button(self, text= "Send", font=('Arial', 12, BOLD), command= lambda : self.goto_predict(self.controller)).place(relx=0.8,rely=0.9)
 
         #ttk.Button(self, text= "Send", command= lambda : controller.show_frame(Predict)).place(relx=0.8,rely=0.9)
         
         # ****** Delete record of treeview ********
-        ttk.Button(self, text= "Delete", command= self.delete).place(relx=0.1,rely=0.9)
+        tk.Button(self, text= "Delete", font=('Arial', 12, BOLD), command= self.delete).place(relx=0.1,rely=0.9)
         #****** Search For Treeview***********
 
         self.search_text = StringVar()
@@ -478,13 +517,13 @@ class SearchUser(tk.Frame):
 
         frame1 = Frame(self)
         frame1.pack()
-        frame1.place(relheight=0.5, relwidth=0.9, relx = 0.05, rely =0.4)
+        frame1.place(relheight=0.5, relwidth=0.9, relx = 0.05, rely =0.1)
 
         tk.Grid.rowconfigure(frame1, 0, weight=1)
         tk.Grid.columnconfigure(frame1, 0, weight=1)
 
         self.tree = ttk.Treeview(frame1,selectmode="browse", show="headings", height=2)
-        self.tree.grid(column=0, row=0, sticky='news')
+        self.tree.grid(column=0, row=0, pady= 2, sticky='news')
         ## Adds scrollbars
         wY = ttk.Scrollbar(frame1, orient="vertical", command=self.tree.yview)
         wY.grid(column=1, row=0, sticky='ns')
