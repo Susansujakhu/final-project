@@ -10,9 +10,6 @@ import numpy as np
 from fastai import *
 from fastai.vision import *
 
-from os import name, path
-from openpyxl import load_workbook
-
 from first import First
 from search import SearchUser
 from interface import Interface
