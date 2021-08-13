@@ -32,8 +32,6 @@ class Predict(tk.Frame):
 
 
         self.controller = controller
-        # self.get_data = self.controller.get_page(SearchUser)
-
 
     def tkraise(self):
         style = ttk.Style()
@@ -47,7 +45,6 @@ class Predict(tk.Frame):
         ttk.Button(self, text= "Predict", 
         command= self.showResult).place(relx = 0.26, rely = 0.6)
         self.get_data = self.controller.get_page(interface.Interface)
-        print(self.get_data.from_form)
         if self.get_data.from_form == False:
             self.get_data = self.controller.get_page(search.SearchUser)
             self.back_flag = False
@@ -62,7 +59,7 @@ class Predict(tk.Frame):
         for i, row in enumerate(iterRows, 1):
             if i != 1:
                 rowData = [ cell.value for cell in row ]
-                if self.selected_id == rowData[0]:
+                if str(self.selected_id) == str(rowData[0]):
                     self.row_data = rowData
                     break
         self.column = ['Patient ID', 'Name', 'Gender', 'Age', 'Blood Group', 'Contact', 'Address', 'City', 'Description', 'Image', 'Result', 'Date Created']

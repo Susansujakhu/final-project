@@ -265,6 +265,7 @@ class SearchUser(tk.Frame):
 
             
     def goto_predict(self, controller):
+
         try:
             for item in self.tree.selection():
                 self.row_item = self.tree.item(item)
