@@ -50,10 +50,8 @@ class Predict(tk.Frame):
         print(self.get_data.from_form)
         if self.get_data.from_form == False:
             self.get_data = self.controller.get_page(search.SearchUser)
-            self.back_flag = "search"
         else:
             self.get_data = self.controller.get_page(interface.Interface)
-            self.back_flag = "interface"
         # print(self.get_data.selected_id)
         self.selected_id = self.get_data.selected_id
         book = load_workbook("data.xlsx")
@@ -92,7 +90,7 @@ class Predict(tk.Frame):
 
 
         # Move to Previous Frame
-        ttk.Button(frame1, text= "Back", command= lambda : self.controller.show_frame(interface.Interface) if self.back_flag == "interface" else self.controller.show_frame(search.SearchUser)).place(relx = 0, rely =0)
+        ttk.Button(frame1, text= "Back", command= lambda : self.controller.show_frame(interface.Interface) if self.get_data.from_form == True else self.controller.show_frame(interface.Interface)).place(relx = 0, rely =0)
         
 
         ttk.Label(self, text="Details", style = 'W.TLabel').place(relx = 0.1, rely =0.1)

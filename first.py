@@ -1,7 +1,5 @@
 import tkinter as tk
-from tkinter import Frame, PhotoImage, StringVar, ttk
-from tkinter import messagebox
-from tkinter import font
+from tkinter import Frame, ttk
 #from tkinter import font
 from tkinter.constants import DISABLED, RIDGE, X
 from tkinter.font import BOLD

@@ -68,15 +68,8 @@ class Interface(tk.Frame):
         
         
         # Hospitall name
-        ttk.Button(self, text= "Back", command= lambda : self.controller.show_frame(first.First)).place(relx = 0.03, rely = 0.02, relwidth=0.08, relheight=0.04)
-        ttk.Label(self, font= ('Algerian', 25, BOLD), text="Add Patient", style='Interface.TLabel').place(relx = 0.3, rely =0.01)
+        ttk.Label(self, text="Add Patient", font= ('Algerian', 25, BOLD),foreground = 'white').place(relx = 0.15, rely =0.04)
         self.makeWidgets()
-        # ******* Buttons BACK, ADD and Send ***********
-
-        btnY = 0.9
-        
-        tk.Button(self, text= "Save", background= 'green', foreground= 'white', relief='raised', font = ('Helvetika', 14, BOLD), command= self.add_data).place(relx=0.18, rely=btnY, relwidth=0.08, relheight=0.05)
-        tk.Button(self, text= "Clear", background= 'red', foreground= 'white', relief='raised', font = ('Helvetika', 14, BOLD), command= self.clear).place(relx=0.3, rely = btnY, relwidth=0.08, relheight=0.05)
         tk.Frame.tkraise(self)
 
     def makeWidgets(self):
@@ -93,7 +86,7 @@ class Interface(tk.Frame):
         style = entryStyle = labelStyle = buttonStyle = comboBoxStyle = ttk.Style()
         style.configure('.', font=('Helvetica', 12))
         entryStyle.configure('TEntry',foreground = 'green')
-        labelStyle.configure('Interface.TLabel', background = 'black', foreground = 'white', font = ('Times New Roman', 14, BOLD))
+        labelStyle.configure('TLabel', background = 'black', foreground = 'white', font = ('Times New Roman', 14, BOLD))
         buttonStyle.configure('TButton',background='#232323', foreground = 'black', borderwidth=1, focusthickness=3, focuscolor='green')
         buttonStyle.map('TButton', background=[('active','green')])
         comboBoxStyle.configure('TCombo', font = ('Arial', 11))
@@ -101,7 +94,7 @@ class Interface(tk.Frame):
         entryWidth = 320
         entryHeight = 27
         addY = 0.07
-        relX = 0.097
+        relX = 0.095
         entryRelX = relX + 0.085
         P_relY = 0.15
         N_relY = P_relY + addY
@@ -111,19 +104,29 @@ class Interface(tk.Frame):
         Add_relY = C_relY + addY
         City_relY = Add_relY + addY
         D_relY = City_relY + addY
+        btnX = 0.15
+        btnY = D_relY + 0.25
 
         # Patient Id
-        ttk.Label(self, text="*Patient Id:", style='Interface.TLabel').place(relx = relX, rely =P_relY)
+        ttk.Label(self, text="*Patient Id:", style='TLabel').place(relx = relX, rely =P_relY)
         ttk.Entry(self, font = ('Arial', 12), textvariable = self.id_text, style="TEntry").place(
             relx = entryRelX, rely =P_relY, width=220, height=entryHeight)
 
+        tk.Button(self, text="Search ID",  
+                            command= self.auto_fill,
+                            relief= "raised",
+                            font=('Arial', 10, BOLD),
+                            activeforeground='white',
+                            activebackground='green',
+                            ).place(relx = relX + 0.26, rely = P_relY, relwidth=0.06, relheight=0.035)   
+
         # Name
-        ttk.Label(self, text="*Full Name:", style='Interface.TLabel').place(relx = relX, rely =N_relY)
+        ttk.Label(self, text="*Full Name:", style='TLabel').place(relx = relX, rely =N_relY)
         ttk.Entry(self, font = ('Arial', 12), textvariable = self.name_text, style="TEntry").place(
             relx = entryRelX, rely =N_relY, width = entryWidth, height=entryHeight)
 
         # Gender
-        ttk.Label(self, text="*Gender:", style='Interface.TLabel').place(relx = relX, rely =G_relY)
+        ttk.Label(self, text="*Gender:", style='TLabel').place(relx = relX, rely =G_relY)
        
         # Gender Combobox
         self.gender = ttk.Combobox(self, textvariable=self.gender_value, 
@@ -134,14 +137,14 @@ class Interface(tk.Frame):
              relx = entryRelX, rely =G_relY, width=130, height=entryHeight)
 
         # Age
-        ttk.Label(self, text="*Age:", style='Interface.TLabel').place(relx = relX, rely = A_relY)
+        ttk.Label(self, text="*Age:", style='TLabel').place(relx = relX, rely = A_relY)
         ttk.Entry(self, font = ('Arial', 12), textvariable = self.age_value).place(
             relx = entryRelX, rely = A_relY, width=90, height=entryHeight)
         
         #********************************************************************
 
         # Blood Group
-        ttk.Label(self, text="Blood Group:", style='Interface.TLabel').place(relx = relX + 0.17, rely =A_relY)
+        ttk.Label(self, text="Blood Group:", style='TLabel').place(relx = relX + 0.17, rely =A_relY)
         self.blood_group = ttk.Combobox(self, textvariable=self.blood_value, 
                                 state='readonly')
         self.blood_group['values'] = ('A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-')
@@ -150,53 +153,78 @@ class Interface(tk.Frame):
             relx = relX + 0.2558, rely = A_relY, width=90, height=entryHeight)
 
         # Contact Number
-        ttk.Label(self, text="Contact:", style='Interface.TLabel').place(relx = relX, rely = C_relY)
+        ttk.Label(self, text="Contact:", style='TLabel').place(relx = relX, rely = C_relY)
         ttk.Entry(self, font = ('Arial', 12), textvariable = self.contact_text, style="TEntry").place(
             relx = entryRelX, rely = C_relY, width=entryWidth, height=entryHeight)
 
         # Address
-        ttk.Label(self, text="Address:", style='Interface.TLabel').place(relx = relX, rely = Add_relY)
+        ttk.Label(self, text="Address:", style='TLabel').place(relx = relX, rely = Add_relY)
         ttk.Entry(self, font = ('Arial', 12), textvariable = self.address_text).place(
             relx = entryRelX, rely = Add_relY, width=entryWidth, height=entryHeight)
         
         # City
-        ttk.Label(self, text="City:", style='Interface.TLabel').place(relx = relX, rely = City_relY)
+        ttk.Label(self, text="City:", style='TLabel').place(relx = relX, rely = City_relY)
         ttk.Entry(self, font = ('Arial', 12), textvariable = self.city_text).place(
             relx = entryRelX, rely = City_relY, width=entryWidth, height=entryHeight)
 
         # Description
         from tkinter.scrolledtext import ScrolledText
-        ttk.Label(self, text="Description:", style='Interface.TLabel').place(relx = relX, rely =D_relY)
+        ttk.Label(self, text="Description:", style='TLabel').place(relx = relX, rely =D_relY)
         self.description = ScrolledText(self, wrap=tk.WORD,
                                       width=42, height=4, border = 2,
                                       font=("Times New Roman", 15))
-        self.description.place(
-            relx = relX, rely = D_relY + 0.06)
-        # ttk.(self, font = ('Arial', 12), textvariable = self.description).place(
-        #     relx = 0.1, rely =0.23, width=100, height=25)
+        self.description.place(relx = relX, rely = D_relY + 0.06)
 
-        # ***********************************
-        # searchId_btn = ttk.Button(self, text='Search ID', 
-        #                             font=('Arial', 19, BOLD),
-        #                             foreground='white',
-        #                             background='black',
-        #                             activeforeground='white',
-        #                             activebackground='red4',
-        #                             command= self.auto_fill
-        #                         )
-        # searchId_btn.place(relx = 0.28, rely = 0.1)
-        # self.changeOnHover(searchId_btn, 'red4', 'black')
-       
-        #ttk.Button(self, text= 'Search ID', command= self.auto_fill).place(relx = 0.28, rely = 0.11, relwidth=0.05, relheight=0.03)    
-        #ttk.Button(self, text= "Search ID", font= ('Arial', 10), command= self.auto_fill).place(relx = 0.28, rely = 0.1)    
+        # ******* Buttons BACK, ADD and Send *********** 
+        #Back Button        
+        back_image = Image.open("back3.png")
+        back_image = back_image.resize((30, 25), Image.ANTIALIAS)
+        back = ImageTk.PhotoImage(back_image)
+        back_btn = tk.Button(self, image = back, 
+                                borderwidth = 0,
+                                command= lambda : self.controller.show_frame(first.First), 
+                                background='black',
+                                )
+        back_btn.place(relx = relX - 0.08, rely = P_relY - 0.12, width=40, height=35)
+        back_btn.image = back   
 
-        tk.Button(self, text="Search ID",  
-                            command= self.auto_fill,
+        saveBtn = tk.Button(self, text= "Save",
+                            background= 'forestgreen',
+                            foreground= 'white',
+                            relief='raised',
+                            borderwidth = 0,
+                            font = ('Times New Roman', 14, BOLD),
+                            command= self.add_data)
+        saveBtn.place(relx=btnX, rely=btnY, relwidth=0.08, relheight=0.05)
+        self.changeOnHover(saveBtn, 'darkgreen', 'forestgreen', 'white', 'white')
+
+        clearBtn = tk.Button(self, text= "Clear",
+                            background= 'red', 
+                            foreground= 'white',
+                            relief='raised',
+                            borderwidth = 0,
+                            font = ('Times New Roman', 14, BOLD),
+                            command= self.clear)
+        clearBtn.place(relx=btnX + 0.1, rely = btnY, relwidth=0.08, relheight=0.05)
+        self.changeOnHover(clearBtn, 'red4', 'red', 'white', 'white')
+
+        #tk.Button(self, text= "Back", font=('Arial', 10, BOLD),command= lambda : self.controller.show_frame(First)).place(relx = relX - 0.06, rely = P_relY - 0.12, relwidth=0.08, relheight=0.04)
+        tk.Button(self, text="Browse All",
                             relief= "raised",
+                            borderwidth = 0,
                             font=('Arial', 10, BOLD),
-                            activeforeground='white',
-                            activebackground='green',
-                            ).place(relx = relX + 0.26, rely = P_relY, relwidth=0.06, relheight=0.035)    
+                            command= lambda : self.controller.show_frame(search.SearchUser)
+                            ).place(relx = relX + 0.3, rely = P_relY - 0.12, relwidth=0.07, relheight=0.04)  
+
+    def changeOnHover(self, button, colorOnHover, colorOnLeave, fgHover, fgLeave):
+  
+        # background on entering widget
+        button.bind("<Enter>", func=lambda e: button.config(
+            background=colorOnHover, foreground = fgHover))
+
+        # background on leaving widget
+        button.bind("<Leave>", func=lambda e: button.config(
+            background = colorOnLeave, foreground = fgLeave))
 
     def auto_fill(self):
         book = load_workbook("stored-data.xlsx")

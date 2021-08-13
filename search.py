@@ -37,13 +37,24 @@ class SearchUser(tk.Frame):
 
     def tkraise(self):
         self.trees()
-        ttk.Button(self, text= "Back", command= lambda : self.controller.show_frame(first.First)).place(relx = 0, rely =0)
-        ttk.Button(self, text= "Send", command= lambda : self.goto_predict(self.controller)).place(relx=0.8,rely=0.9)
+        #Back Button        
+        back_image = Image.open("back3.png")
+        back_image = back_image.resize((30, 25), Image.ANTIALIAS)
+        back = ImageTk.PhotoImage(back_image)
+        back_btn = tk.Button(self, image = back, 
+                                borderwidth = 0,
+                                command= lambda : self.controller.show_frame(first.First), 
+                                background='black',
+                                )
+        back_btn.place(relx = 0.01, rely = 0.01, width=40, height=35)
+        back_btn.image = back
+        #ttk.Button(self, text= "Back", command= lambda : self.controller.show_frame(First)).place(relx = 0, rely =0)
+        tk.Button(self, text= "Send", font=('Arial', 12, BOLD), command= lambda : self.goto_predict(self.controller)).place(relx=0.8,rely=0.9)
 
         #ttk.Button(self, text= "Send", command= lambda : controller.show_frame(Predict)).place(relx=0.8,rely=0.9)
         
         # ****** Delete record of treeview ********
-        ttk.Button(self, text= "Delete", command= self.delete).place(relx=0.1,rely=0.9)
+        tk.Button(self, text= "Delete", font=('Arial', 12, BOLD), command= self.delete).place(relx=0.1,rely=0.9)
         #****** Search For Treeview***********
 
         self.search_text = StringVar()
@@ -87,13 +98,13 @@ class SearchUser(tk.Frame):
 
         frame1 = Frame(self)
         frame1.pack()
-        frame1.place(relheight=0.5, relwidth=0.9, relx = 0.05, rely =0.4)
+        frame1.place(relheight=0.5, relwidth=0.9, relx = 0.05, rely =0.1)
 
         tk.Grid.rowconfigure(frame1, 0, weight=1)
         tk.Grid.columnconfigure(frame1, 0, weight=1)
 
         self.tree = ttk.Treeview(frame1,selectmode="browse", show="headings", height=2)
-        self.tree.grid(column=0, row=0, sticky='news')
+        self.tree.grid(column=0, row=0, pady= 2, sticky='news')
         ## Adds scrollbars
         wY = ttk.Scrollbar(frame1, orient="vertical", command=self.tree.yview)
         wY.grid(column=1, row=0, sticky='ns')
