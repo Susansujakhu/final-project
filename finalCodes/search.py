@@ -34,8 +34,16 @@ class SearchUser(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         self.controller = controller
-        ttk.Label(self, text="Patient Details", font= ('Times New Roman', 25, BOLD)).place(relx = 0.15, rely =0.04)
+        ttk.Label(self, text="Patient Details",font= ('Times New Roman', 25, BOLD)).place(relx = 0.35, rely =0.04)
 
+    def changeOnHover(self, button, colorOnHover, colorOnLeave, fgHover, fgLeave):
+  
+        # background on entering widget
+        button.bind("<Enter>", func=lambda e: button.config(background=colorOnHover, foreground = fgHover))
+
+        # background on leaving widget
+        button.bind("<Leave>", func=lambda e: button.config(background = colorOnLeave, foreground = fgLeave))
+    
     def tkraise(self):
         
         self.trees()
@@ -50,29 +58,49 @@ class SearchUser(tk.Frame):
         back_btn.place(relx = 0.005, rely = 0.005, width=27, height=22)
         back_btn.image = back
 
-        tk.Button(self, text= "Send", font=('Arial', 12, BOLD), command= lambda : self.goto_predict(self.controller)).place(relx=0.8,rely=0.9)
+        sendBtn = tk.Button(self, text= "Send",
+                    font=('Segoe UI', 12, BOLD),
+                    cursor="hand2",
+                    background='darkgreen',
+                    foreground='white',
+                    activeforeground='white',
+                    activebackground='forestgreen',
+                    command= lambda : self.goto_predict(self.controller))
+        sendBtn.place(relx=0.8,rely=0.9, relwidth=0.09, relheight= 0.05)
+        self.changeOnHover(sendBtn, 'forestgreen', 'darkgreen', 'white', 'white')
 
         # ****** Delete record of treeview ********
-        tk.Button(self, text= "Delete", font=('Arial', 12, BOLD), command= self.delete).place(relx=0.1,rely=0.9)
+        deleteBtn = tk.Button(self, text= "Delete",
+                    font=('Segoe UI', 12, BOLD),
+                    cursor="hand2",
+                    command= self.delete,
+                    background='red4',
+                    foreground='white',
+                    activeforeground='white',
+                    activebackground='red')
+        deleteBtn.place(relx=0.1,rely=0.9, relwidth=0.09, relheight= 0.05)
+        self.changeOnHover(deleteBtn, 'red', 'red4', 'white', 'white')
         
         #****** Search For Treeview***********
-        self.searchByX = 0.65
-        self.searchByY = 0.1
+        self.searchByX = 0.7
+        self.searchByY = 0.055
         self.search_text = StringVar()
         self.searchBy = StringVar()
 
-        ttk.Label(self, text="Search By").place(relx = self.searchByX, rely =self.searchByY)
+        ttk.Label(self, text="Search By", font=('Segoe UI', 10)).place(relx = self.searchByX, rely =self.searchByY)
 
         self.search_by = ttk.Combobox(self, textvariable=self.searchBy, 
                                 state='readonly')
         self.search_by['values'] = ('Id', 'Name', 'Address')
         self.search_by.current(0)
-        self.search_by.place(relx = self.searchByX + 0.07, rely =self.searchByY, width=100, height=25)
+        self.search_by.place(relx = self.searchByX + 0.05, rely =self.searchByY - 0.004, width=100, height=25)
 
-        ttk.Entry(self, font = ('Arial', 12), textvariable = self.search_text).place(
-            relx = self.searchByX + 0.15, rely =self.searchByY, width=150, height=25)
+        ttk.Entry(self, font = ('Segoe UI', 12), cursor="hand2", textvariable = self.search_text).place(
+            relx = self.searchByX + 0.13, rely =self.searchByY - 0.004, width=150, height=25)
         self.search_text.trace("w",self.filterSearch)
         tk.Frame.tkraise(self)
+    
+    
 
     def filterSearch(self, *args):
         self.category = self.searchBy.get()
@@ -98,13 +126,13 @@ class SearchUser(tk.Frame):
 
         frame1 = Frame(self)
         frame1.pack()
-        frame1.place(relheight=0.5, relwidth=0.9, relx = 0.05, rely =0.1)
+        frame1.place(relheight=0.8, relwidth=0.9, relx = 0.05, rely =0.1)
 
-        tk.Grid.rowconfigure(frame1, 0, weight=1)
-        tk.Grid.columnconfigure(frame1, 0, weight=1)
+        tk.Grid.rowconfigure(frame1, 0, weight=50)
+        tk.Grid.columnconfigure(frame1, 0, weight=50)
         style = ttk.Style(frame1)
-        style.configure("Treeview.Heading", font=('Arial', 11, BOLD))
-        style.configure('Treeview', rowheight=30, font = ('Arial', 10))  #SOLUTION
+        style.configure("Treeview.Heading", font=('Segoe UI', 10, BOLD))
+        style.configure('Treeview', rowheight=30, font = ('Segoe UI', 10))  #SOLUTION
         self.tree = ttk.Treeview(frame1,selectmode="browse", show="headings", height=2)
         self.tree.grid(column=0, row=0, pady= 2, sticky='news')
 
