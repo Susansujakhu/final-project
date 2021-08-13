@@ -21,6 +21,10 @@ from os import name, path
 from openpyxl import load_workbook
 from PIL import Image, ImageTk
 import report_generator
+from first import First
+from search import SearchUser
+from interface import Interface
+from predict import Predict
 
 LARGE_FONT = ("Verdana", 12)
 
