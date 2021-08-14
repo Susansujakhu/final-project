@@ -60,12 +60,12 @@ class Predict(tk.Frame):
         frame1.place(relheight=1, relwidth=0.25, relx = 0, rely =0)
 
         #The X-ray Frame
-        self.image_frame = Frame(self, border= 5, relief= RIDGE)
+        self.image_frame = Frame(self, border= 2, relief= RIDGE)
         self.image_frame.pack()
-        self.image_frame.place(relheight=0.5, relwidth=0.5, relx = 0.35, rely =0.1)
+        self.image_frame.place(relheight=0.5, relwidth=0.6, relx = 0.3, rely =0.1)
         
-        ttk.Label(self.image_frame, text = "Upload X-ray Image", foreground= 'grey', style= 'W.TLabel').place(
-            relx = 0.35, rely =0.4)
+        self.xray = ttk.Label(self.image_frame, text = "Upload X-ray Image", foreground= 'grey', style= 'W.TLabel')
+        self.xray.place(relx = 0.35, rely =0.4)
 
         #Results Frame
         frame2 = Frame(self, border= 5, relief= RIDGE)
@@ -74,10 +74,10 @@ class Predict(tk.Frame):
 
         ttk.Label(self, text="Predictions", style = 'W.TLabel').place(relx = 0.55, rely =0.02)
         # File Explorer Button
-        ttk.Button(self, text= "Open Image", cursor="hand2", command= self.fileOpen).place(relx = 0.87, rely = 0.1)
+        ttk.Button(self, text= "Open Image", cursor="hand2", command= self.fileOpen).place(relx = 0.9, rely = 0.1)
 
         # Predict Button
-        ttk.Button(self, text= "Predict", cursor="hand2", command= self.showResult).place(relx = 0.87, rely = 0.56)
+        ttk.Button(self, text= "Predict", cursor="hand2", command= self.showResult).place(relx = 0.9, rely = 0.56)
         self.get_data = self.controller.get_page(interface.Interface)
         if self.get_data.from_form == False:
             self.get_data = self.controller.get_page(search.SearchUser)
@@ -147,6 +147,11 @@ class Predict(tk.Frame):
             coord = boxes.numpy()[0]
             # show_labeled_image(image1, boxes, labels)
 
+            orgX = 0.07
+            orgY = 0.2
+            cropX = orgX + 0.4
+            cropY = orgY
+
             # test = image1.resize((300, 300), Image.ANTIALIAS)
             original_image = image1
             test = ImageDraw.Draw(original_image)  
@@ -155,19 +160,26 @@ class Predict(tk.Frame):
 
             original_width, original_height = original_image.size
 
-            original = original_image.resize((int((original_width * 250 )/original_height),250))
+            original = original_image.resize((int((original_width * 200 )/original_height),200))
             original = ImageTk.PhotoImage(original)
             label1 = tkinter.Label(image=original)
 
             label1.image = original
-            ttk.Label(self.image_frame, image=original).place(relx = 0.2, rely =0.01)
-            ttk.Label(self, text= self.fileName).place(relx = 0.26, rely =0.19)
+            ttk.Label(self.image_frame, image=original).place(relx = orgX, rely =orgY)
+            ttk.Label(self.image_frame, text="Original Image").place(relx = orgX + 0.1, rely= orgY + 0.7)
+            ttk.Label(self, text= self.fileName).place(relx = 0.26, rely =0.61)
     
+            #Knee localized image
             self.cropped_img = image1.crop((coord[0], coord[1], coord[2], coord[3]))
-            cropped_image = ImageTk.PhotoImage(self.cropped_img)
-            label2 = tkinter.Label(image=cropped_image)
-            label2.image = cropped_image
-            ttk.Label(self.image_frame, image=cropped_image).place(relx = 0.1, rely =0.01)
+
+            cropped_width, cropped_height = self.cropped_img.size
+            cropped_image = self.cropped_img.resize((int((cropped_width * 200 )/cropped_height),200))
+            cropped = ImageTk.PhotoImage(cropped_image)
+            label2 = tkinter.Label(image=cropped)
+            label2.image = cropped
+            ttk.Label(self.image_frame, image=cropped).place(relx = cropX, rely =cropY)
+            ttk.Label(self.image_frame, text="Localized Image").place(relx = cropX, rely= cropY + 0.7)
+            self.xray.config(text="")
 
     def showResult(self):
         if self.fileName == "":
