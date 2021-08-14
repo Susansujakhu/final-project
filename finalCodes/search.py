@@ -115,7 +115,7 @@ class SearchUser(tk.Frame):
         search = search.lower()
         for eachItem in ItemsOnTreeview:
             if search in self.tree.item(eachItem)['values'][j-1].lower():
-                # print(search)
+                print(search)
                 #print(self.tree.item(eachItem)['values'][2])
                 search_var = self.tree.item(eachItem)['values']
                 self.tree.delete(eachItem)

@@ -157,37 +157,44 @@ class Predict(tk.Frame):
             cropX = orgX + 0.4
             cropY = orgY
 
-            coord = filtered_boxes.numpy()[0]
-            # show_labeled_image(image1, boxes, labels)
-            print(coord[0])
-            # test = image1.resize((300, 300), Image.ANTIALIAS)
-            original_image = image1
-            test = ImageDraw.Draw(original_image)  
-            test.rectangle([coord[0], coord[1], coord[2], coord[3]], outline ="red")
-            test.text((coord[0],coord[1]), "Knee", fill=(255,0,0))
+            try:
+                coord = filtered_boxes.numpy()[0]
+                # show_labeled_image(image1, boxes, labels)
 
-            original_width, original_height = original_image.size
+                # test = image1.resize((300, 300), Image.ANTIALIAS)
+                original_image = image1
+                test = ImageDraw.Draw(original_image)  
+                test.rectangle([coord[0], coord[1], coord[2], coord[3]], outline ="red")
+                test.text((coord[0],coord[1]), "Knee", fill=(255,0,0))
 
-            original = original_image.resize((int((original_width * 200 )/original_height),200))
-            original = ImageTk.PhotoImage(original)
-            label1 = tkinter.Label(image=original)
+                original_width, original_height = original_image.size
 
-            label1.image = original
-            ttk.Label(self.image_frame, image=original).place(relx = orgX, rely =orgY)
-            ttk.Label(self.image_frame, text="Original Image").place(relx = orgX + 0.1, rely= orgY + 0.7)
-            ttk.Label(self, text= self.fileName).place(relx = 0.26, rely =0.61)
-    
-            #Knee localized image
-            self.cropped_img = image1.crop((coord[0], coord[1], coord[2], coord[3]))
+                original = original_image.resize((int((original_width * 200 )/original_height),200))
+                original = ImageTk.PhotoImage(original)
+                label1 = tkinter.Label(image=original)
 
-            cropped_width, cropped_height = self.cropped_img.size
-            cropped_image = self.cropped_img.resize((int((cropped_width * 200 )/cropped_height),200))
-            cropped = ImageTk.PhotoImage(cropped_image)
-            label2 = tkinter.Label(image=cropped)
-            label2.image = cropped
-            ttk.Label(self.image_frame, image=cropped).place(relx = cropX, rely =cropY)
-            ttk.Label(self.image_frame, text="Localized Image").place(relx = cropX, rely= cropY + 0.7)
-            self.xray.config(text="")
+                label1.image = original
+                ttk.Label(self.image_frame, image=original).place(relx = orgX, rely =orgY)
+                ttk.Label(self.image_frame, text="Original Image").place(relx = orgX + 0.1, rely= orgY + 0.7)
+                ttk.Label(self, text= self.fileName).place(relx = 0.26, rely =0.61)
+        
+                #Knee localized image
+                self.cropped_img = image1.crop((coord[0], coord[1], coord[2], coord[3]))
+
+                if os.path.isfile("temp.png"):
+                    os.remove("temp.png")  # remove the file
+                cropped_image = self.cropped_img.save("temp.png")
+                cropped_width, cropped_height = self.cropped_img.size
+                cropped_image = self.cropped_img.resize((int((cropped_width * 200 )/cropped_height),200))
+                cropped = ImageTk.PhotoImage(cropped_image)
+                label2 = tkinter.Label(image=cropped)
+                label2.image = cropped
+                ttk.Label(self.image_frame, image=cropped).place(relx = cropX, rely =cropY)
+                ttk.Label(self.image_frame, text="Localized Image").place(relx = cropX, rely= cropY + 0.7)
+                self.xray.config(text="")
+            except:
+                messagebox.showinfo(title = "Alert",message = "Unable to detect Knee. Please choose another image")
+
 
     def showResult(self):
         if self.fileName == "":
