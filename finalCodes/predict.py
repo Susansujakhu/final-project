@@ -19,11 +19,17 @@ from openpyxl import Workbook
 from datetime import datetime
 from os import name, path
 from openpyxl import load_workbook
-from PIL import Image, ImageTk
+from PIL import Image, ImageTk, ImageDraw
 import report_generator
 
 import search
 import interface
+
+from detecto import core, utils, visualize
+from detecto.visualize import show_labeled_image, plot_prediction_grid
+from torchvision import transforms
+import matplotlib.pyplot as plt
+import numpy as np
 
 class Predict(tk.Frame):
 
@@ -32,18 +38,46 @@ class Predict(tk.Frame):
 
 
         self.controller = controller
-
+        self.model = core.Model.load('models/localizing_model.pth', ['knee'])
     def tkraise(self):
         style = ttk.Style()
-        style.configure('W.TLabel', font=('Helvetica', 20))
+        style.configure('W.TLabel', font=('Times New Roman', 20, BOLD))
 
-        ttk.Label(self, text="Predictions", style = 'W.TLabel').place(relx = 0.5, rely =0.02)
+        
+
+        # Move to Previous Frame
+        #ttk.Button(self, text= "Back", command= lambda : self.controller.show_frame(interface.Interface) if self.back_flag == True else self.controller.show_frame(search.SearchUser)).place(relx = 0, rely =0)
+        
+
+        
+        
+        #print(self.row)
+        #print(self.get_data.item_row)
+        
+        #Deetails Frame
+        frame1 = Frame(self, border= 10, relief= RIDGE)
+        frame1.pack()
+        frame1.place(relheight=1, relwidth=0.25, relx = 0, rely =0)
+
+        #The X-ray Frame
+        self.image_frame = Frame(self, border= 5, relief= RIDGE)
+        self.image_frame.pack()
+        self.image_frame.place(relheight=0.5, relwidth=0.5, relx = 0.35, rely =0.1)
+        
+        ttk.Label(self.image_frame, text = "Upload X-ray Image", foreground= 'grey', style= 'W.TLabel').place(
+            relx = 0.35, rely =0.4)
+
+        #Results Frame
+        frame2 = Frame(self, border= 5, relief= RIDGE)
+        frame2.pack()
+        frame2.place(relheight=1, relwidth=1, relx = 0.25, rely =0.65)
+
+        ttk.Label(self, text="Predictions", style = 'W.TLabel').place(relx = 0.55, rely =0.02)
         # File Explorer Button
-        ttk.Button(self, text= "Open Image", command= self.fileOpen).place(relx = 0.26, rely = 0.12)
+        ttk.Button(self, text= "Open Image", cursor="hand2", command= self.fileOpen).place(relx = 0.87, rely = 0.1)
 
         # Predict Button
-        ttk.Button(self, text= "Predict", 
-        command= self.showResult).place(relx = 0.26, rely = 0.6)
+        ttk.Button(self, text= "Predict", cursor="hand2", command= self.showResult).place(relx = 0.87, rely = 0.56)
         self.get_data = self.controller.get_page(interface.Interface)
         if self.get_data.from_form == False:
             self.get_data = self.controller.get_page(search.SearchUser)
@@ -64,41 +98,29 @@ class Predict(tk.Frame):
                     break
         self.column = ['Patient ID', 'Name', 'Gender', 'Age', 'Blood Group', 'Contact', 'Address', 'City', 'Description', 'Image', 'Result', 'Date Created']
         self.col_name = self.column
-        
-        #print(self.row)
-        #print(self.get_data.item_row)
-        
-        
-        self.image_frame = Frame(self, border= 10, relief= RIDGE)
-        self.image_frame.pack()
-        self.image_frame.place(relheight=0.5, relwidth=0.5, relx = 0.4, rely =0.1)
-        frame1 = Frame(self, border= 10, relief= RIDGE)
-        frame1.pack()
-        frame1.place(relheight=1, relwidth=0.25, relx = 0, rely =0)
-        ttk.Label(self.image_frame, text = "Upload an Xray Image", foreground= 'grey', style= 'W.TLabel').place(
-            relx = 0.2, rely =0.4)
 
-        frame2 = Frame(self, border= 10, relief= RIDGE)
-        frame2.pack()
-        frame2.place(relheight=1, relwidth=1, relx = 0.25, rely =0.65)
+        #Back Button        
+        back_image = Image.open("backBlack.png")
+        back_image = back_image.resize((25, 20), Image.ANTIALIAS)
+        back = ImageTk.PhotoImage(back_image)
+        back_btn = tk.Button(frame1, image = back, 
+                                borderwidth = 0,
+                                command= lambda : self.controller.show_frame(interface.Interface) if self.back_flag == True else self.controller.show_frame(search.SearchUser), 
+                                cursor="hand2")
+        back_btn.place(relx = 0.005, rely = 0.005, width=27, height=22)
+        back_btn.image = back
 
+        ttk.Label(self, text="Results", style = 'W.TLabel').place(relx = 0.3, rely =0.68)
+        tk.Label(self, text= "KL Grade : ", font=('TkTextFont', 10, BOLD)).place(relx = 0.3, rely =0.75)
+        tk.Label(self, text= "Accuracy : ",  font=('TkTextFont', 10, BOLD)).place(relx = 0.3, rely =0.8)
 
-        ttk.Label(self, text="Results", style = 'W.TLabel').place(relx = 0.6, rely =0.68)
-        ttk.Label(self, text= "KL Grade : ").place(relx = 0.3, rely =0.75)
-        ttk.Label(self, text= "Accuracy : ").place(relx = 0.3, rely =0.8)
-
-
-        # Move to Previous Frame
-        ttk.Button(frame1, text= "Back", command= lambda : self.controller.show_frame(interface.Interface) if self.back_flag == True else self.controller.show_frame(search.SearchUser)).place(relx = 0, rely =0)
-        
-
-        ttk.Label(self, text="Details", style = 'W.TLabel').place(relx = 0.1, rely =0.1)
+        ttk.Label(self, text="Details", style = 'W.TLabel').place(relx = 0.08, rely =0.1)
         m = 0
         row_pos = 0.18
         for each in self.col_name:
-            ttk.Label(self, text=each +" :").place(relx = 0.05, rely = row_pos)
+            tk.Label(self, text=each +" :", font= ('TkTextFont', 10, BOLD)).place(relx = 0.05, rely = row_pos)
             
-            ttk.Label(self, text=self.row_data[m]).place(relx = 0.13, rely = row_pos)
+            tk.Label(self, text=self.row_data[m], font= ('TkTextFont', 10)).place(relx = 0.13, rely = row_pos + 0.005)
 
             row_pos = row_pos + 0.05
             m += 1
@@ -120,20 +142,42 @@ class Predict(tk.Frame):
         if FILE_name:
             self.fileName = FILE_name
             image1 = Image.open(self.fileName)
-            test = ImageTk.PhotoImage(image1)
-            label1 = tkinter.Label(image=test)
-            label1.image = test
-            ttk.Label(self.image_frame, image=test).place(relx = 0.2, rely =0.01)
+            predictions = self.model.predict(image1)
+            labels, boxes, scores = predictions
+            coord = boxes.numpy()[0]
+            # show_labeled_image(image1, boxes, labels)
+
+            # test = image1.resize((300, 300), Image.ANTIALIAS)
+            original_image = image1
+            test = ImageDraw.Draw(original_image)  
+            test.rectangle([coord[0], coord[1], coord[2], coord[3]], outline ="red")
+            test.text((coord[0],coord[1]), "Knee", fill=(255,0,0))
+
+            original_width, original_height = original_image.size
+
+            original = original_image.resize((int((original_width * 250 )/original_height),250))
+            original = ImageTk.PhotoImage(original)
+            label1 = tkinter.Label(image=original)
+
+            label1.image = original
+            ttk.Label(self.image_frame, image=original).place(relx = 0.2, rely =0.01)
             ttk.Label(self, text= self.fileName).place(relx = 0.26, rely =0.19)
     
+            self.cropped_img = image1.crop((coord[0], coord[1], coord[2], coord[3]))
+            cropped_image = ImageTk.PhotoImage(self.cropped_img)
+            label2 = tkinter.Label(image=cropped_image)
+            label2.image = cropped_image
+            ttk.Label(self.image_frame, image=cropped_image).place(relx = 0.1, rely =0.01)
+
     def showResult(self):
         if self.fileName == "":
             messagebox.showinfo(title = "Alert",message = "Please Open Any File First")
         else:
-            img = open_image(self.fileName)
+            img = open.image(self.fileName)
+            # img = open.image(self.cropped_img)
             # Load Model
             # self.x = load_learner('F:\\8thproject\\', 'final.pkl') 
-            self.x = load_learner('E:\\8th sem project\\Project Final\\final-project\\','trainfinal_vgg_model_after_fit.pkl') 
+            self.x = load_learner('models/','MedicalExpert-Iresnet_final.pkl') 
             # self.fileName = ""
             
             predict = self.x.predict(img)
