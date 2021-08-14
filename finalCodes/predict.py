@@ -1,4 +1,5 @@
 """ Messing about with tkinter """
+import os
 import tkinter as tk
 from tkinter import Frame, PhotoImage, StringVar, ttk
 from tkinter import messagebox
@@ -141,17 +142,24 @@ class Predict(tk.Frame):
         )
         if FILE_name:
             self.fileName = FILE_name
-            image1 = Image.open(self.fileName)
+            image1 = Image.open(self.fileName).convert('RGB')
             predictions = self.model.predict(image1)
             labels, boxes, scores = predictions
-            coord = boxes.numpy()[0]
-            # show_labeled_image(image1, boxes, labels)
+            
+
+            thresh=0.7
+            filtered_indices=np.where(scores>thresh)
+            filtered_scores=scores[filtered_indices]
+            filtered_boxes=boxes[filtered_indices]
 
             orgX = 0.07
             orgY = 0.2
             cropX = orgX + 0.4
             cropY = orgY
 
+            coord = filtered_boxes.numpy()[0]
+            # show_labeled_image(image1, boxes, labels)
+            print(coord[0])
             # test = image1.resize((300, 300), Image.ANTIALIAS)
             original_image = image1
             test = ImageDraw.Draw(original_image)  
@@ -185,14 +193,17 @@ class Predict(tk.Frame):
         if self.fileName == "":
             messagebox.showinfo(title = "Alert",message = "Please Open Any File First")
         else:
-            img = open.image(self.fileName)
-            # img = open.image(self.cropped_img)
+            img = open_image("temp.png")
+
             # Load Model
             # self.x = load_learner('F:\\8thproject\\', 'final.pkl') 
             self.x = load_learner('models/','MedicalExpert-Iresnet_final.pkl') 
             # self.fileName = ""
             
             predict = self.x.predict(img)
+
+            if os.path.isfile("temp.png"):
+                os.remove("temp.png")  # remove the file
 
             max_value = max(predict[2],key=lambda x:float(x))
             #print("KL Grade : "+ str(predict[0]) + " with value " + str(max_value.item()*100))
