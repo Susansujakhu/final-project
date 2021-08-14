@@ -91,7 +91,7 @@ class SearchUser(tk.Frame):
 
         self.search_by = ttk.Combobox(self, textvariable=self.searchBy, 
                                 state='readonly')
-        self.search_by['values'] = ('Id', 'Name', 'Address')
+        self.search_by['values'] = ('Patient ID', 'Name', 'Address')
         self.search_by.current(0)
         self.search_by.place(relx = self.searchByX + 0.05, rely =self.searchByY - 0.004, width=100, height=25)
 
@@ -108,14 +108,14 @@ class SearchUser(tk.Frame):
         for i in self.column:
             j = j + 1
             if self.category == i:
+                print(i)
                 break
 
         ItemsOnTreeview = self.tree.get_children()
         search = self.search_text.get()
-        search = search.lower()
+        search = str(search).lower()
         for eachItem in ItemsOnTreeview:
-            if search in self.tree.item(eachItem)['values'][j-1].lower():
-                print(search)
+            if search in str(self.tree.item(eachItem)['values'][j-1]).lower():
                 #print(self.tree.item(eachItem)['values'][2])
                 search_var = self.tree.item(eachItem)['values']
                 self.tree.delete(eachItem)
