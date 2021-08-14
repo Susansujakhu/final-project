@@ -43,7 +43,6 @@ class Predict(tk.Frame):
     def tkraise(self):
         style = ttk.Style()
         style.configure('W.TLabel', font=('Times New Roman', 20, BOLD))
-
         
 
         # Move to Previous Frame
@@ -86,6 +85,7 @@ class Predict(tk.Frame):
         else:
             self.get_data = self.controller.get_page(interface.Interface)
             self.back_flag = True
+        
         # print(self.get_data.selected_id)
         self.selected_id = self.get_data.selected_id
         book = load_workbook("data.xlsx")
@@ -219,7 +219,7 @@ class Predict(tk.Frame):
             accuracy_percent = str(max_value.item()*100)
             ttk.Label(self, text= grade).place(relx = 0.38, rely =0.75)
             ttk.Label(self, text= accuracy_percent).place(relx = 0.38, rely =0.8)
-
+            
             ttk.Button(self, text= "Save Result", command= self.save_result).place(relx = 0.38, rely = 0.85)
             ttk.Button(self, text= "Download Result", command= self.download).place(relx = 0.5, rely =0.85)
 
@@ -236,12 +236,12 @@ class Predict(tk.Frame):
         wb = load_workbook('data.xlsx')
         ws = wb.active # Get active sheet
 
+        
                 # Find Cell Place in Data
         for i in range(2, ws.max_row + 1):
             for j in range(1,2):
                 # print(ws.cell(i,j).value)
                 if str(row_id) == str(ws.cell(i,j).value):
-                    print(ws.cell(i,j).value)
                     cell_place = (ws.cell(i,j))  
 
 
@@ -255,6 +255,8 @@ class Predict(tk.Frame):
 
         wb.save('data.xlsx')
         #****** Update Treeview*********
+        if self.back_flag == True:
+            self.get_data = self.controller.get_page(search.SearchUser)
         ItemsOnTreeview = self.get_data.tree.get_children()
 
         for eachItem in ItemsOnTreeview:
@@ -267,9 +269,11 @@ class Predict(tk.Frame):
                 rowData = [ cell.value for cell in row ]
                 self.get_data.tree.insert('', "end", values=rowData)
         book.close()
-
-        messagebox.showinfo(title = "Success",message = "Result Saved Successful")
+        if self.back_flag == True:
+            self.get_data = self.controller.get_page(interface.Interface)
+        messagebox.showinfo(title = "Success",message = "Result Save Successful")
     
     def download(self):
         self.save_result()
         report_generator.makePDF(self)
+        messagebox.showinfo(title = "Success",message = "Report Downolad Successful")
