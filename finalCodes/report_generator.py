@@ -48,7 +48,7 @@ def makePDF(self):
 
 	pdf.line(0, 80, 210, 80)
 	pdf.ln(h = '10')
-	pdf.image(self.fileName, w=105, h = 105, x = 10, y = 100)
+	pdf.image('temp.png', w=105, h = 105, x = 10, y = 100)
 
 	pdf.set_font("Arial" ,'B' , size = 18)
 	pdf.text(x= 150, y= 100, txt= "Result")

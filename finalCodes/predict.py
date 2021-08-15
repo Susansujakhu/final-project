@@ -204,13 +204,10 @@ class Predict(tk.Frame):
 
             # Load Model
             # self.x = load_learner('F:\\8thproject\\', 'final.pkl') 
-            self.x = load_learner('models/','MedicalExpert-Iresnet_final.pkl') 
+            self.x = load_learner('models/','train16_batch-40-10_resnet_final.pkl') 
             # self.fileName = ""
             
             predict = self.x.predict(img)
-
-            if os.path.isfile("temp.png"):
-                os.remove("temp.png")  # remove the file
 
             max_value = max(predict[2],key=lambda x:float(x))
             #print("KL Grade : "+ str(predict[0]) + " with value " + str(max_value.item()*100))
@@ -255,22 +252,20 @@ class Predict(tk.Frame):
 
         wb.save('data.xlsx')
         #****** Update Treeview*********
-        if self.back_flag == True:
-            self.get_data = self.controller.get_page(search.SearchUser)
-        ItemsOnTreeview = self.get_data.tree.get_children()
 
-        for eachItem in ItemsOnTreeview:
-                self.get_data.tree.delete(eachItem)
-        # refresh data from xlsl file
-        book = load_workbook("data.xlsx")
-        iterRows = iter(book.active)
-        for i, row in enumerate(iterRows, 1):
-            if i != 1:
-                rowData = [ cell.value for cell in row ]
-                self.get_data.tree.insert('', "end", values=rowData)
-        book.close()
-        if self.back_flag == True:
-            self.get_data = self.controller.get_page(interface.Interface)
+        # ItemsOnTreeview = self.get_data.tree.get_children()
+
+        # for eachItem in ItemsOnTreeview:
+        #         self.get_data.tree.delete(eachItem)
+        # # refresh data from xlsl file
+        # book = load_workbook("data.xlsx")
+        # iterRows = iter(book.active)
+        # for i, row in enumerate(iterRows, 1):
+        #     if i != 1:
+        #         rowData = [ cell.value for cell in row ]
+        #         self.get_data.tree.insert('', "end", values=rowData)
+        # book.close()
+
         messagebox.showinfo(title = "Success",message = "Result Save Successful")
     
     def download(self):
