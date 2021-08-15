@@ -74,10 +74,12 @@ class Predict(tk.Frame):
 
         ttk.Label(self, text="Predictions", style = 'W.TLabel').place(relx = 0.55, rely =0.02)
         # File Explorer Button
-        ttk.Button(self, text= "Open Image", cursor="hand2", command= self.fileOpen).place(relx = 0.9, rely = 0.1)
+        btnOpen = tk.Button(self, text= "Open Image",font=("Arial", 10, BOLD), cursor="hand2", command= self.fileOpen)
+        btnOpen.place(relx = 0.9, rely = 0.1, relwidth= 0.075, relheight=0.04)
 
         # Predict Button
-        ttk.Button(self, text= "Predict", cursor="hand2", command= self.showResult).place(relx = 0.9, rely = 0.56)
+        btnPredict = tk.Button(self, text= "Predict", font=("Arial", 10, BOLD), cursor="hand2", command= self.showResult)
+        btnPredict.place(relx = 0.9, rely = 0.56, relwidth= 0.075, relheight=0.04)
         self.get_data = self.controller.get_page(interface.Interface)
         if self.get_data.from_form == False:
             self.get_data = self.controller.get_page(search.SearchUser)
@@ -154,7 +156,7 @@ class Predict(tk.Frame):
 
             orgX = 0.07
             orgY = 0.2
-            cropX = orgX + 0.4
+            cropX = orgX + 0.5
             cropY = orgY
 
             try:
@@ -176,7 +178,8 @@ class Predict(tk.Frame):
                 label1.image = original
                 ttk.Label(self.image_frame, image=original).place(relx = orgX, rely =orgY)
                 ttk.Label(self.image_frame, text="Original Image").place(relx = orgX + 0.1, rely= orgY + 0.7)
-                ttk.Label(self, text= self.fileName).place(relx = 0.26, rely =0.61)
+                name = tk.Label(self, text= self.fileName, font = ('Arial', 10))
+                name.place(relx = 0.26, rely =0.61)
         
                 #Knee localized image
                 self.cropped_img = image1.crop((coord[0], coord[1], coord[2], coord[3]))
@@ -190,7 +193,7 @@ class Predict(tk.Frame):
                 label2 = tkinter.Label(image=cropped)
                 label2.image = cropped
                 ttk.Label(self.image_frame, image=cropped).place(relx = cropX, rely =cropY)
-                ttk.Label(self.image_frame, text="Localized Image").place(relx = cropX, rely= cropY + 0.7)
+                ttk.Label(self.image_frame, text="Localized Image").place(relx = cropX + 0.1, rely= cropY + 0.7)
                 self.xray.config(text="")
             except:
                 messagebox.showinfo(title = "Alert",message = "Unable to detect Knee. Please choose another image")
