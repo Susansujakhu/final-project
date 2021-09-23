@@ -13,14 +13,10 @@ import numpy as np
 from fastai import *
 from fastai.vision import *
 
-import tkinter.filedialog
-import openpyxl
-from openpyxl import Workbook
 from datetime import datetime
 from os import name, path
 from openpyxl import load_workbook
 from PIL import Image, ImageTk
-import report_generator
 import first
 import predict
 import search

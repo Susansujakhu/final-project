@@ -1,23 +1,16 @@
 """ Messing about with tkinter """
 import os
 import tkinter as tk
-from tkinter import Frame, PhotoImage, StringVar, ttk
+from tkinter import Frame, ttk
 from tkinter import messagebox
-from tkinter import font
-#from tkinter import font
 from tkinter.constants import DISABLED, RIDGE, X
 from tkinter.font import BOLD
-# from fastai.basic_train import load_learner
-# from fastai.vision.image import open_image
 
 import numpy as np
 from fastai import *
 from fastai.vision import *
 
 import tkinter.filedialog
-import openpyxl
-from openpyxl import Workbook
-from datetime import datetime
 from os import name, path
 from openpyxl import load_workbook
 from PIL import Image, ImageTk, ImageDraw
@@ -26,9 +19,7 @@ import report_generator
 import search
 import interface
 
-from detecto import core, utils, visualize
-from detecto.visualize import show_labeled_image, plot_prediction_grid
-from torchvision import transforms
+from detecto import core
 import matplotlib.pyplot as plt
 import numpy as np
 

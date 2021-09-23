@@ -1,12 +1,8 @@
 """ Messing about with tkinter """
 import tkinter as tk
-#from tkinter import font
 from tkinter.constants import DISABLED, RIDGE, X
 from tkinter.font import BOLD
-# from fastai.basic_train import load_learner
-# from fastai.vision.image import open_image
 
-import numpy as np
 from fastai import *
 from fastai.vision import *
 
@@ -49,14 +45,11 @@ def main():
     
     root = Window()
     root.title('Knee OA')
-    #root.configure(bg='green')
     
     width = root.winfo_screenwidth()
     height = root.winfo_screenheight()
     root.geometry('%dx%d+0+0'% (width, height))
     root.state('zoomed')
-    #root.resizable(False,False)
-    # root.iconbitmap('./assets/pythontutorial.ico')
     root.bind('<Key-Escape>', lambda event: quit())
     root.update()
 
