@@ -204,10 +204,10 @@ class Predict(tk.Frame):
             messagebox.showinfo(title = "Alert",message = "Please Open Any File First")
         else:
             img = open_image("temp.png")
-
+            
             # Load Model
             # self.x = load_learner('F:\\8thproject\\', 'final.pkl') 
-            self.x = load_learner('models/','train16_batch-40-10_resnet_final.pkl') 
+            self.x = load_learner('models/','train64_batch-20-10epoch_vgg.pkl') 
             # self.fileName = ""
             
             predict = self.x.predict(img)
